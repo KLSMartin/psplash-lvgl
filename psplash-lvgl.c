@@ -338,7 +338,9 @@ int main(int argc, char **argv)
   if (!rundir)
     rundir = "/run";
 
-  chdir(rundir);
+  if (chdir(rundir) != 0) {
+    perror(NULL);
+  }
 
   if (mkfifo(PSPLASH_FIFO, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP))
   {
