@@ -1,0 +1,5 @@
+[wrap-git]
+url = https://github.com/lvgl/lvgl.git
+revision = v7.10.1
+
+patch_directory = lvgl
