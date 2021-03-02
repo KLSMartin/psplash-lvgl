@@ -7,14 +7,14 @@ configuration_t configuration;
 static void _read_color(config_t *libconfig_handle, const char *path_prefix, int *color)
 {
     char path_buf[256];
-    char keys[] = "bgr";
+    char keys[] = "bgra";
     int i;
     int color_tmp;
     *color = 0;
     for (i = 0; i < sizeof(keys); i++) {
         snprintf(path_buf, sizeof(path_buf)-1, "%s.%c", path_prefix, keys[i]);
         if (config_lookup_int(libconfig_handle, path_buf, &color_tmp) != CONFIG_TRUE) {
-            color_tmp = 0;
+            color_tmp = 0x00;
         }
         *color |= (color_tmp & 0xff) << i * 8;
     }

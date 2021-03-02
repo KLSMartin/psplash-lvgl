@@ -92,7 +92,7 @@ static lv_obj_t *background_create(lv_obj_t *parent)
 {
   lv_png_init();
   lv_obj_t *image = lv_img_create(parent, NULL);
-  lv_img_set_src(image, "/usr/share/logo.png");
+  lv_img_set_src(image, configuration.background.image_path);
   lv_obj_align(image, NULL, LV_ALIGN_CENTER, 0, 0);
   return image;
 }
@@ -109,19 +109,21 @@ static lv_obj_t *interactive_progress_bar_create(lv_obj_t *parent, progress_indi
   background_create(parent);
   lv_obj_t *bar = lv_bar_create(parent, NULL);
   data->ui.bar = bar;
+  lv_color_t indicator_color = { .full = configuration.progress_bar.colors.indicator };
+  lv_color_t background_color = { .full = configuration.progress_bar.colors.background };
 
   // use custom style
   lv_style_init(&progress_indicator_data.ui.styles.bg);
-  lv_style_set_bg_color(&progress_indicator_data.ui.styles.bg, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+  lv_style_set_bg_color(&progress_indicator_data.ui.styles.bg, LV_STATE_DEFAULT, background_color);
   lv_style_set_bg_opa(&progress_indicator_data.ui.styles.bg, LV_STATE_DEFAULT, LV_OPA_COVER);
   lv_obj_add_style(bar, LV_BAR_PART_BG, &progress_indicator_data.ui.styles.bg);
   lv_style_init(&progress_indicator_data.ui.styles.indicator);
-  lv_style_set_bg_color(&progress_indicator_data.ui.styles.indicator, LV_STATE_DEFAULT, LV_COLOR_MAKE(0xE8,0x4E,0x0F));
+  lv_style_set_bg_color(&progress_indicator_data.ui.styles.indicator, LV_STATE_DEFAULT, indicator_color);
   lv_style_set_bg_opa(&progress_indicator_data.ui.styles.indicator, LV_STATE_DEFAULT, LV_OPA_COVER);
   lv_obj_add_style(bar, LV_BAR_PART_INDIC, &progress_indicator_data.ui.styles.indicator);
 
-  lv_obj_set_width(bar, parent_obj_width * 0.5);
-  lv_obj_align(bar, NULL, LV_ALIGN_IN_BOTTOM_MID, 0, -100);
+  lv_obj_set_size(bar, configuration.progress_bar.layout.width, configuration.progress_bar.layout.height);
+  lv_obj_align(bar, NULL, LV_ALIGN_IN_BOTTOM_MID, configuration.progress_bar.layout.offset.x, configuration.progress_bar.layout.offset.y);
   // normalize scale [0 to 100]
   lv_bar_set_range(bar, 0, 100);
   return bar;
@@ -372,7 +374,7 @@ int main(int argc, char **argv)
   init_lvgl();
   ui_create();
   pthread_create(&ui_update_thread, NULL, ui_update_thread_cb, NULL);
-  psplash_draw_progress(0);
+  psplash_draw_progress(30);
 
 #ifdef PSPLASH_STARTUP_MSG
   psplash_draw_msg(fb, PSPLASH_STARTUP_MSG);
