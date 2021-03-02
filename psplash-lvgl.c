@@ -37,6 +37,7 @@
 #include "monitor.h"
 
 /* Project Includes */
+#include "config.h"
 
 /* === Defines ======================================================= */
 #ifndef DEBUG
@@ -329,6 +330,8 @@ int main(int argc, char **argv)
   char *rundir;
   int pipe_fd, ret = 0;
   pthread_t ui_update_thread;
+
+  read_in_configuration("config.ini");
 
   rundir = getenv("PSPLASH_FIFO_DIR");
 

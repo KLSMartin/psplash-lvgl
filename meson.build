@@ -49,6 +49,9 @@ endif
 executable(
     'psplash-lvgl',
     dependencies: dependencies,
-    sources: 'psplash-lvgl.c',
+    sources: [
+        'psplash-lvgl.c',
+        'config.c',
+    ],
     install: true
 )
