@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <string.h>
 #include <libconfig.h>
 #include "config.h"
@@ -10,11 +11,13 @@ static void _read_color(config_t *libconfig_handle, const char *path_prefix, int
     char keys[] = "bgra";
     int i;
     int color_tmp;
+    const int default_color_val = 0x00;
     *color = 0;
-    for (i = 0; i < sizeof(keys); i++) {
+    for (i = 0; i < sizeof(keys)-1; i++) {
         snprintf(path_buf, sizeof(path_buf)-1, "%s.%c", path_prefix, keys[i]);
         if (config_lookup_int(libconfig_handle, path_buf, &color_tmp) != CONFIG_TRUE) {
-            color_tmp = 0x00;
+            fprintf(stderr, "configuration reader: Could not find a valid value at \"%s\". Defaulting to 0x%x.\n", path_buf, default_color_val);
+            color_tmp = default_color_val;
         }
         *color |= (color_tmp & 0xff) << i * 8;
     }
@@ -56,6 +59,8 @@ _init_defaults_return:
     configuration.progress_bar.layout.height = 20;
     configuration.progress_bar.layout.offset.x = 0;
     configuration.progress_bar.layout.offset.y = 0;
+    configuration.progress_bar.colors.background = 0xffffffff;
+    configuration.progress_bar.colors.indicator = 0xffcccccc;
     strncpy(configuration.background.image_path, "/usr/share/logo.png", path_size_minus_one);
     configuration.background.image_path[path_size_minus_one] = '\0';
 }
