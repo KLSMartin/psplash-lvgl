@@ -16,16 +16,6 @@
 #include <systemd/sd-daemon.h>
 #endif
 
-/***************************************************************************/ /**
- * @file
- * @brief   manages various disk space related operations
- * @ingroup
- * @author  ML1
- * \n       KLS Martin GmbH + Co. KG
- * \n       Germany
- * @date    Created 23.02.2121
- ******************************************************************************/
-
 /* === Includes ============================================================= */
 /* standard includes */
 #include <stdlib.h>
