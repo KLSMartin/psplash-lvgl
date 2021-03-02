@@ -1,0 +1,7 @@
+[wrap-file]
+directory = libconfig-1.4.10
+source_filename = libconfig-1.4.10.tar.gz
+source_url = http://www.hyperrealm.com/packages/libconfig-1.4.10.tar.gz
+source_hash = c04cc443fb02a548502d737fb7d9593e9bc3a6e41fac696dfe65d66ca4f9d0e1
+
+patch_directory = libconfig

@@ -20,6 +20,12 @@ dependencies = [
         static: true,
         default_options: ['default_library=static'],
     ),
+    dependency(
+        'libconfig',
+        fallback : ['libconfig', 'libconfig_dep'],
+        static: true,
+        default_options: ['default_library=static'],
+    ),
 ]
 
 # system integration
