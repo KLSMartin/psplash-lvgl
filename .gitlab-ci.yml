@@ -1,9 +1,11 @@
 stages:
   - build
 
+image: registry.klsmartin-development.de:443/platform/meta-kls:2.3.1
+
 release:
+  tags: [ docker ]
   stage: build
-  image: 'registry.klsmartin-development.de:443/platform/meta-kls:2.3.1'
   variables:
     BUILDTYPE: 'release'
   script:
