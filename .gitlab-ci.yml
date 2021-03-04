@@ -1,0 +1,19 @@
+stages:
+  - build
+
+image: registry.klsmartin-development.de:443/platform/meta-kls:2.3.1
+
+release:
+  tags: [ docker ]
+  stage: build
+  variables:
+    BUILDTYPE: 'release'
+  script:
+    # use the most recent meson version.
+    - pip install git+https://github.com/mesonbuild/meson.git
+    # make sure to pick the freshly installed meson, not the one provided by the image.
+    - /usr/local/bin/meson --cross-file=/usr/share/meson/arm-kls-linux-gnueabi-meson.cross --buildtype=${BUILDTYPE} build
+    - env DESTDIR=sysroot ninja -C build install
+  artifacts:
+    paths:
+      - "sysroot/*"

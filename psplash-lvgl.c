@@ -1,10 +1,12 @@
 /* 
- *  pslash - a lightweight framebuffer splashscreen for embedded devices. 
+ *  psplash-lvgl
  *
- *  Copyright (c) 2006 Matthew Allum <mallum@o-hand.com>
+ *  Copyright (c) 2021 Leif Middelschulte <leif.middelschulte@klsmartin.com>
  *
- *  Parts of this file ( fifo handling ) based on 'usplash' copyright 
+ *  Parts of this file ( fifo handling ) based on 'usplash' copyright
  *  Matthew Garret.
+ *  Other parts are based on psplash-fb.c by Matthew Allum
+ *  Copyright (c) 2006 Matthew Allum <mallum@o-hand.com>
  *
  *  SPDX-License-Identifier: GPL-2.0-or-later
  *
@@ -13,16 +15,6 @@
 #ifdef HAVE_SYSTEMD
 #include <systemd/sd-daemon.h>
 #endif
-
-/***************************************************************************/ /**
- * @file
- * @brief   manages various disk space related operations
- * @ingroup
- * @author  ML1
- * \n       KLS Martin GmbH + Co. KG
- * \n       Germany
- * @date    Created 23.02.2121
- ******************************************************************************/
 
 /* === Includes ============================================================= */
 /* standard includes */
@@ -38,11 +30,14 @@
 
 /* lvgl includes */
 #include "lvgl.h"
+#include "lv_png.h"
+
 // #include "themes/apply_theme.h"
 #include "drm.h"
 #include "monitor.h"
 
 /* Project Includes */
+#include "config.h"
 
 /* === Defines ======================================================= */
 #ifndef DEBUG
@@ -63,6 +58,10 @@ typedef struct
   struct
   {
     lv_task_t *update_task;
+    struct {
+      lv_style_t bg;
+      lv_style_t indicator;
+    } styles;
     lv_obj_t *bar;
   } ui;
 } progress_indicator_data_t;
@@ -89,6 +88,15 @@ static void update_ui(void)
   lv_bar_set_value(progress_indicator_data.ui.bar, progress_indicator_data.progress, LV_ANIM_ON);
 }
 
+static lv_obj_t *background_create(lv_obj_t *parent)
+{
+  lv_png_init();
+  lv_obj_t *image = lv_img_create(parent, NULL);
+  lv_img_set_src(image, configuration.background.image_path);
+  lv_obj_align(image, NULL, LV_ALIGN_CENTER, 0, 0);
+  return image;
+}
+
 /*
   Desired layout:
   +-----------------------------------------------+
@@ -97,14 +105,24 @@ static void update_ui(void)
 */
 static lv_obj_t *interactive_progress_bar_create(lv_obj_t *parent, progress_indicator_data_t *data)
 {
-  const lv_coord_t parent_obj_width = lv_obj_get_width_fit(parent);
+  background_create(parent);
   lv_obj_t *bar = lv_bar_create(parent, NULL);
   data->ui.bar = bar;
-  lv_obj_set_auto_realign(bar, true);
-  lv_obj_align_origo(bar, NULL, LV_ALIGN_CENTER, 0, 0);
-  lv_cont_set_fit2(bar, LV_FIT_MAX, LV_FIT_TIGHT);
-  lv_cont_set_layout(bar, LV_LAYOUT_COLUMN_MID);
-  lv_obj_set_width(bar, parent_obj_width * 0.8);
+  lv_color_t indicator_color = { .full = configuration.progress_bar.colors.indicator };
+  lv_color_t background_color = { .full = configuration.progress_bar.colors.background };
+
+  // use custom style
+  lv_style_init(&progress_indicator_data.ui.styles.bg);
+  lv_style_set_bg_color(&progress_indicator_data.ui.styles.bg, LV_STATE_DEFAULT, background_color);
+  lv_style_set_bg_opa(&progress_indicator_data.ui.styles.bg, LV_STATE_DEFAULT, LV_OPA_COVER);
+  lv_obj_add_style(bar, LV_BAR_PART_BG, &progress_indicator_data.ui.styles.bg);
+  lv_style_init(&progress_indicator_data.ui.styles.indicator);
+  lv_style_set_bg_color(&progress_indicator_data.ui.styles.indicator, LV_STATE_DEFAULT, indicator_color);
+  lv_style_set_bg_opa(&progress_indicator_data.ui.styles.indicator, LV_STATE_DEFAULT, LV_OPA_COVER);
+  lv_obj_add_style(bar, LV_BAR_PART_INDIC, &progress_indicator_data.ui.styles.indicator);
+
+  lv_obj_set_size(bar, configuration.progress_bar.layout.width, configuration.progress_bar.layout.height);
+  lv_obj_align(bar, NULL, LV_ALIGN_IN_BOTTOM_MID, configuration.progress_bar.layout.offset.x, configuration.progress_bar.layout.offset.y);
   // normalize scale [0 to 100]
   lv_bar_set_range(bar, 0, 100);
   return bar;
@@ -121,6 +139,7 @@ static void *ui_update_thread_cb(void *data) {
 }
 
 
+
 /***************************************************************************/ /**
  * @brief  Initialises LittlevGL and registers drivers
  ******************************************************************************/
@@ -128,6 +147,7 @@ static void init_lvgl()
 {
   static lv_disp_drv_t disp_drv;
   static lv_disp_buf_t disp_buf;
+  static lv_disp_t *disp;
   static lv_color_t *buf_1;
 
   /* LittlevGL init */
@@ -157,10 +177,12 @@ static void init_lvgl()
   disp_drv.flush_cb = drm_flush; /*It flushes the internal graphical buffer to the drm device*/
 #endif
   disp_drv.buffer = &disp_buf;
-  lv_disp_drv_register(&disp_drv);
 
-  /* apply theme */
-  // apply_theme();
+  /* propaget the runtime determined screen size */
+  disp_drv.hor_res = display_size.width;
+  disp_drv.ver_res = display_size.height;
+  disp = lv_disp_drv_register(&disp_drv);
+  lv_disp_set_default(disp);
 }
 
 /***************************************************************************/ /**
@@ -169,15 +191,9 @@ static void init_lvgl()
 *
 * Takes no arguments
 ******************************************************************************/
-static void ui_create(__attribute__((unused)) const int angle)
+static void ui_create()
 {
-  /*-------------- create page ---------------------*/
-  lv_obj_t *page = lv_page_create(lv_scr_act(), NULL);
-  lv_obj_set_size(page, display_size.width, display_size.height);
-  /* fix size, no scrolling */
-  lv_page_set_scrollable_fit(page, LV_FIT_MAX);
-
-  interactive_progress_bar_create(page, &progress_indicator_data);
+  interactive_progress_bar_create(lv_scr_act(), &progress_indicator_data);
 }
 
 void psplash_draw_msg(const char *msg)
@@ -313,32 +329,19 @@ void psplash_main(int pipe_fd, int timeout)
 int main(int argc, char **argv)
 {
   char *rundir;
-  int pipe_fd, i = 0, angle = 0, ret = 0;
+  int pipe_fd, ret = 0;
   pthread_t ui_update_thread;
 
-  while (++i < argc)
-  {
-    if (!strcmp(argv[i], "-a") || !strcmp(argv[i], "--angle"))
-    {
-      if (++i >= argc)
-        goto fail;
-      angle = atoi(argv[i]);
-      continue;
-    }
-
-  fail:
-    fprintf(stderr,
-            "Usage: %s [-a|--angle <0|90|180|270>]\n",
-            argv[0]);
-    exit(-1);
-  }
+  read_in_configuration("config.ini");
 
   rundir = getenv("PSPLASH_FIFO_DIR");
 
   if (!rundir)
     rundir = "/run";
 
-  chdir(rundir);
+  if (chdir(rundir) != 0) {
+    perror(NULL);
+  }
 
   if (mkfifo(PSPLASH_FIFO, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP))
   {
@@ -357,7 +360,6 @@ int main(int argc, char **argv)
     exit(-2);
   }
 
-  //   if ((fb = psplash_fb_new(angle,fbdev_id)) == NULL)
   if (0)
   {
     ret = -1;
@@ -369,21 +371,13 @@ int main(int argc, char **argv)
 #endif
 
   init_lvgl();
-  ui_create(angle);
+  ui_create();
   pthread_create(&ui_update_thread, NULL, ui_update_thread_cb, NULL);
-  psplash_draw_progress(0);
+  psplash_draw_progress(30);
 
 #ifdef PSPLASH_STARTUP_MSG
   psplash_draw_msg(fb, PSPLASH_STARTUP_MSG);
 #endif
-
-  /* Scene set so let's flip the buffers. */
-  /* The first time we also synchronize the buffers so we can build on an
-   * existing scene. After the first scene is set in both buffers, only the
-   * text and progress bar change which overwrite the specific areas with every
-   * update.
-   */
-  //   psplash_fb_flip(fb, 1);
 
   psplash_main(pipe_fd, 0);
 
