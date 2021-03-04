@@ -8,6 +8,7 @@ release:
   stage: build
   variables:
     BUILDTYPE: 'release'
+    CI_DEBUG_TRACE: "true"
   before_script:
     # use the most recent meson version.
     - pip install git+https://github.com/mesonbuild/meson.git
