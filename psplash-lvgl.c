@@ -105,7 +105,6 @@ static lv_obj_t *background_create(lv_obj_t *parent)
 */
 static lv_obj_t *interactive_progress_bar_create(lv_obj_t *parent, progress_indicator_data_t *data)
 {
-  const lv_coord_t parent_obj_width = lv_obj_get_width_fit(parent);
   background_create(parent);
   lv_obj_t *bar = lv_bar_create(parent, NULL);
   data->ui.bar = bar;

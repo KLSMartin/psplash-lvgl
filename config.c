@@ -25,7 +25,6 @@ static void _read_color(config_t *libconfig_handle, const char *path_prefix, int
 
 void read_in_configuration(const char *configuration_file_path)
 {
-    int ret;
     config_t libconfig_handle;
     const char *background_image_tmp;
     const size_t path_size_minus_one = sizeof(configuration.background.image_path) - 1;
@@ -37,7 +36,7 @@ void read_in_configuration(const char *configuration_file_path)
     if (config_lookup_string(&libconfig_handle, "background.image_path", &background_image_tmp) == CONFIG_TRUE)
         strncpy(configuration.background.image_path, background_image_tmp, path_size_minus_one);
     else
-        strncpy(&configuration.background.image_path, "/usr/share/logo.png", path_size_minus_one);
+        strncpy(configuration.background.image_path, "/usr/share/logo.png", path_size_minus_one);
     configuration.background.image_path[path_size_minus_one] = '\0';
 
     if (config_lookup_int(&libconfig_handle, "progress_bar.layout.width", &configuration.progress_bar.layout.width) != CONFIG_TRUE)
