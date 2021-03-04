@@ -8,11 +8,13 @@ release:
   stage: build
   variables:
     BUILDTYPE: 'release'
-  script:
+  before_script:
     # use the most recent meson version.
     - pip install git+https://github.com/mesonbuild/meson.git
     # make sure to pick the freshly installed meson, not the one provided by the image.
-    - /usr/local/bin/meson --cross-file=/usr/share/meson/arm-kls-linux-gnueabi-meson.cross --buildtype=${BUILDTYPE} build
+    - export PATH=/usr/local/bin:$PATH
+  script:
+    - meson --cross-file=/usr/share/meson/arm-kls-linux-gnueabi-meson.cross --buildtype=${BUILDTYPE} build
     - env DESTDIR=sysroot ninja -C build install
   artifacts:
     paths:
