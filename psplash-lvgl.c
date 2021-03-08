@@ -373,7 +373,7 @@ int main(int argc, char **argv)
   init_lvgl();
   ui_create();
   pthread_create(&ui_update_thread, NULL, ui_update_thread_cb, NULL);
-  psplash_draw_progress(30);
+  psplash_draw_progress(0);
 
 #ifdef PSPLASH_STARTUP_MSG
   psplash_draw_msg(fb, PSPLASH_STARTUP_MSG);
