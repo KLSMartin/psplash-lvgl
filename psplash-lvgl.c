@@ -375,13 +375,7 @@ int main(int argc, char **argv)
   pthread_create(&ui_update_thread, NULL, ui_update_thread_cb, NULL);
   psplash_draw_progress(0);
 
-#ifdef PSPLASH_STARTUP_MSG
-  psplash_draw_msg(fb, PSPLASH_STARTUP_MSG);
-#endif
-
   psplash_main(pipe_fd, 0);
-
-  //   psplash_fb_destroy (fb);
 
 unlink_fifo_exit:
   unlink(PSPLASH_FIFO);
