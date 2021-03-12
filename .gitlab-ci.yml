@@ -17,4 +17,4 @@ release:
     - env DESTDIR=sysroot ninja -C build install
   artifacts:
     paths:
-      - "sysroot/*"
+      - sysroot/
