@@ -1,0 +1,37 @@
+# this file is meant to be used with the meta-kls@V2.3.1 toolchain [0].
+# [0] https://gitlab.klsmartin-development.de/platform/meta-kls/-/jobs/488751/artifacts/browse
+
+[constants]
+sysroots = '/opt/kls-kls/2.3.1/sysroots/'
+native = sysroots / 'x86_64-klssdk-linux'
+toolchain = native / 'usr/bin/arm-kls-linux-gnueabi'
+sysroot = sysroots / 'cortexa9t2hf-neon-kls-linux-gnueabi/'
+c_and_cpp_args = ['-mthumb', '-mfpu=neon', '-mfloat-abi=hard', '-mcpu=cortex-a9', '-fstack-protector-strong', '-D_FORTIFY_SOURCE=2', '-Wformat', '-Wformat-security', '-Werror=format-security', '--sysroot=' + sysroot]
+c_core_args = c_and_cpp_args
+cpp_core_args = c_and_cpp_args
+ld_core_args = ['--sysroot=' + sysroot]
+
+[binaries]
+c =  toolchain / 'arm-kls-linux-gnueabi-gcc'
+cpp = toolchain / 'arm-kls-linux-gnueabi-g++'
+ar = toolchain / 'arm-kls-linux-gnueabi-ar'
+nm = toolchain / 'arm-kls-linux-gnueabi-nm'
+ld = toolchain / 'arm-kls-linux-gnueabi-ld'
+strip = toolchain / 'arm-kls-linux-gnueabi-strip'
+pkgconfig = native / 'usr/bin/pkg-config'
+
+[properties]
+sys_root = sysroot
+
+[built-in options]
+c_args = c_core_args + ['-O2', '-pipe', '-g', '-feliminate-unused-debug-types']
+c_link_args = ld_core_args + ['-Wl,-O1', '-Wl,--hash-style=gnu', '-Wl,--as-needed', '-fstack-protector-strong', '-Wl,-z,relro,-z,now']
+cpp_args = cpp_core_args
+cpp_link_args = ['-Wl,-O1', '-Wl,--hash-style=gnu', '-Wl,--as-needed', '-fstack-protector-strong', '-Wl,-z,relro,-z,now']
+pkg_config_path = [sysroot / 'usr/lib/pkgconfig/', sysroot / 'usr/share/pkgconfig/']
+
+[host_machine]
+system = 'linux'
+cpu_family = 'arm'
+cpu = 'arm'
+endian = 'little'

@@ -8,12 +8,10 @@ release:
   stage: build
   variables:
     BUILDTYPE: 'release'
-    CROSSFILE: '/usr/share/meson/arm-kls-linux-gnueabi-meson.cross'
+    CROSSFILE: 'meta-kls_2.3.1.cross'
   before_script:
     # use the most recent meson version.
-    - pip install git+https://github.com/mesonbuild/meson.git
-    # make sure to pick the freshly installed meson, not the one provided by the image.
-    - export PATH=/usr/local/bin:$PATH
+    - pip install git+https://github.com/mesonbuild/meson.git ninja
   script:
     - meson --cross-file=${CROSSFILE} --buildtype=${BUILDTYPE} -Dstrip=true build
     - env DESTDIR=sysroot ninja -C build install
