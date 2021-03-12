@@ -14,7 +14,6 @@ release:
     - pip install git+https://github.com/mesonbuild/meson.git
     # make sure to pick the freshly installed meson, not the one provided by the image.
     - export PATH=/usr/local/bin:$PATH
-    - export
   script:
     - meson --cross-file=${CROSSFILE} --buildtype=${BUILDTYPE} -Dstrip=true build
     - env DESTDIR=sysroot ninja -C build install
