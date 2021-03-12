@@ -16,7 +16,7 @@ release:
     - export PATH=/usr/local/bin:$PATH
     - export
   script:
-    - meson --cross-file=${CROSSFILE} --buildtype=${BUILDTYPE} build
+    - meson --cross-file=${CROSSFILE} --buildtype=${BUILDTYPE} -Dstrip=true build
     - env DESTDIR=sysroot ninja -C build install
   artifacts:
     paths:
