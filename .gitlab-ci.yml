@@ -14,7 +14,7 @@ release:
     - pip install git+https://github.com/mesonbuild/meson.git ninja
   script:
     - meson --cross-file=${CROSSFILE} --buildtype=${BUILDTYPE} -Dstrip=true build
-    - env DESTDIR=sysroot ninja -C build install
+    - env DESTDIR=sysroot meson install -C build
   artifacts:
     paths:
-      - sysroot/
+      - build/sysroot/
