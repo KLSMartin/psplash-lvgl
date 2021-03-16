@@ -8,7 +8,7 @@ progress_bar = {
     }
     layout =
     {
-        width = 400
+        width = 200
         height = 20
         offset = { x = 0, y = -100 }
     }
