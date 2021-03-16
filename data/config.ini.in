@@ -1,5 +1,5 @@
 background = {
-    image_path = "/usr/share/logo.png"
+    image_path = "@appdatadir@/logo.png"
 }
 progress_bar = {
     colors = {

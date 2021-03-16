@@ -55,3 +55,17 @@ executable(
     ],
     install: true
 )
+configure_file(
+    input : 'data/config.ini.in',
+    output : 'config.ini',
+    configuration : {
+        'appdatadir' : get_option('prefix') / get_option('datadir') / meson.project_name(),
+    },
+    install: true,
+    install_dir: get_option('datadir') / meson.project_name(),
+    install_mode: 'r--r--r--',
+)
+install_data (
+    'data/logo.png',
+    install_mode: 'r--r--r--',
+)
