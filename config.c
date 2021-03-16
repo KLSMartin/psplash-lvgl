@@ -54,6 +54,7 @@ void read_in_configuration(const char *configuration_file_path)
     config_destroy(&libconfig_handle);
     return;
 _init_defaults_return:
+    fprintf(stderr, "Error reading configuration values from %s. Falling back do defaults.\n", configuration_file_path);
     configuration.progress_bar.layout.width = 300;
     configuration.progress_bar.layout.height = 20;
     configuration.progress_bar.layout.offset.x = 0;
