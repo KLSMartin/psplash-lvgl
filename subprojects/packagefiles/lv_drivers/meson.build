@@ -4,9 +4,8 @@ dependencies = []
 
 # is_cross_build is inappropriate here. Use drm/libinput on any embedded (i.e. arm or risc) host system
 if host_machine.cpu_family() in ['arm', 'arm64', 'riscv32', 'riscv64']
-    platform_specific_configuration_file = files('lv_drv_conf_drm_libinput.h')
+    platform_specific_configuration_file = files('lv_drv_conf_drm.h')
     dependencies += [dependency('libdrm', required: true)]
-    dependencies += [dependency('libinput', required: true)]
 else
     platform_specific_configuration_file = files('lv_drv_conf_sdl.h')
     dependencies += [dependency('sdl2', required: true)]
