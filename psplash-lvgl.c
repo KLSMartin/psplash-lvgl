@@ -35,6 +35,7 @@
 // #include "themes/apply_theme.h"
 #include "drm.h"
 #include "monitor.h"
+#include "fbdev.h"
 
 /* Project Includes */
 #include "config.h"
@@ -74,7 +75,9 @@ typedef struct
 
 /* === Static members ======================================================= */
 static const char * const PSPLASH_FIFO = "psplash_fifo";
-static size display_size;
+static struct {
+  uint32_t width, height;
+} display_size;
 static progress_indicator_data_t progress_indicator_data;
 
 /* === Private function prototypes ========================================== */
@@ -149,19 +152,28 @@ static void init_lvgl()
   static lv_disp_buf_t disp_buf;
   static lv_disp_t *disp;
   static lv_color_t *buf_1;
+  char buf[128] = "unspecified";
 
   /* LittlevGL init */
   lv_init();
   /* Linux frame buffer device init */
 #if USE_MONITOR
+  sprintf(buf, "SDL2");
   monitor_init();
   display_size.width = LV_HOR_RES_MAX;
   display_size.height = LV_VER_RES_MAX;
 #endif
 #if USE_DRM
+  sprintf(buf, "DRM");
   drm_init();
   drm_get_sizes(&display_size.width, &display_size.height, NULL);
 #endif
+#if USE_FBDEV
+  sprintf(buf, "FB");
+  fbdev_init();
+  fbdev_get_sizes(&display_size.width, &display_size.height);
+#endif
+  printf("Initialized backend: %s\n", buf);
   // Ignore failing allocation on purpose. Let the application eventually crash (SEGV).
   buf_1 = malloc(display_size.width * display_size.height * sizeof(*buf_1));
 
@@ -176,11 +188,15 @@ static void init_lvgl()
 #if USE_DRM
   disp_drv.flush_cb = drm_flush; /*It flushes the internal graphical buffer to the drm device*/
 #endif
+#if USE_FBDEV
+  disp_drv.flush_cb = fbdev_flush; /*It flushes the internal graphical buffer to the drm device*/
+#endif
   disp_drv.buffer = &disp_buf;
 
   /* propaget the runtime determined screen size */
   disp_drv.hor_res = display_size.width;
   disp_drv.ver_res = display_size.height;
+  printf("Assuming a display size of %dx%d\n", disp_drv.hor_res, disp_drv.ver_res);
   disp = lv_disp_drv_register(&disp_drv);
   lv_disp_set_default(disp);
 }
