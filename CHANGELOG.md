@@ -6,3 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+## [1.0.0] - 2021-06-18
+### Added
+ - install runtime configuration files.
+ - subprojects:lv_drivers: display driver `framebuffer` support.
+
+### Changed
+ - subprojects:lvgl: color depth configuration via meson option
+ - subprojects:lv_drivers: display driver configuration via meson option
+
+### Fixed
+ - handling of color depth < 32
+ - lv_lib_png: pin lvgl v7 compatible release branch
+
+### Removed
+ - lv_drivers: libinput support

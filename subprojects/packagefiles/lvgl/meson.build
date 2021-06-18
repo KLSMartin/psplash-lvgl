@@ -119,6 +119,17 @@ add_project_arguments(
     language: 'c'
 )
 
+# Color depth:
+# - 1:  1 byte per pixel
+# - 8:  RGB332
+# - 16: RGB565
+# - 32: ARGB8888
+add_project_arguments(
+    '-DLV_COLOR_DEPTH=' + get_option('color_depth').to_string(),
+    language: 'c'
+)
+
+
 lvgl = library('lvgl', sources)
 
 if meson.is_subproject()

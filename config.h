@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include "lvgl.h"
 
 typedef struct {
     struct {
@@ -11,7 +12,7 @@ typedef struct {
             int width, height;
         } layout;
         struct {
-            int background, indicator;
+            lv_color_t background, indicator;
         } colors;
     } progress_bar;
     struct {

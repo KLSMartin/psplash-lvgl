@@ -1,0 +1,15 @@
+background = {
+    image_path = "@appdatadir@/logo.png"
+}
+progress_bar = {
+    colors = {
+        background = { r = 255, g = 255, b = 255 }
+        indicator = { r = 255, g = 0, b = 0 }
+    }
+    layout =
+    {
+        width = 200
+        height = 20
+        offset = { x = 0, y = -100 }
+    }
+}
