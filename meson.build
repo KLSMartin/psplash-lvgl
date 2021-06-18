@@ -1,4 +1,8 @@
-project('psplash-lvgl', 'c', meson_version: '>=0.55.0') # required to allow patches for wrap-git mode.
+project('psplash-lvgl',
+    'c',
+    version: '0.0.9999',
+    meson_version: '>=0.55.0' # required to allow patches for wrap-git mode.
+)
 
 # UI toolkit
 dependencies = [
