@@ -1,14 +1,25 @@
-project('lv_drivers', 'c')
+project('lv_drivers', 'c',
+  meson_version : '>=0.58.1',
+)
 
 dependencies = []
 
-# is_cross_build is inappropriate here. Use drm/libinput on any embedded (i.e. arm or risc) host system
-if host_machine.cpu_family() in ['arm', 'arm64', 'riscv32', 'riscv64']
-    platform_specific_configuration_file = files('lv_drv_conf_drm.h')
-    dependencies += [dependency('libdrm', required: true)]
+video_backend = get_option('display_backend')
+if video_backend != 'auto'
+    message('lv_drivers: using display backend ' + video_backend)
+    platform_specific_configuration_file = files('lv_drv_conf_' + video_backend + '.h')
+    if video_backend != 'fb'
+        dependencies += [dependency('lib' + video_backend, required: true)]
+    endif
 else
-    platform_specific_configuration_file = files('lv_drv_conf_sdl.h')
-    dependencies += [dependency('sdl2', required: true)]
+# is_cross_build is inappropriate here. Use drm/libinput on any embedded (i.e. arm or risc) host system
+    if host_machine.cpu_family() in ['arm', 'arm64', 'riscv32', 'riscv64']
+        platform_specific_configuration_file = files('lv_drv_conf_drm.h')
+        dependencies += [dependency('libdrm', required: true)]
+    else
+        platform_specific_configuration_file = files('lv_drv_conf_sdl2.h')
+        dependencies += [dependency('sdl2', required: true)]
+    endif
 endif
 
 configuration_file = configure_file(

@@ -9,12 +9,18 @@ release:
   variables:
     BUILDTYPE: 'release'
     CROSSFILE: 'meta-kls_2.3.1.cross'
+    MESON_FLAGS: '-Dstrip=true'
   before_script:
     # use the most recent meson version.
     - pip install git+https://github.com/mesonbuild/meson.git ninja
   script:
-    - meson --cross-file=${CROSSFILE} --buildtype=${BUILDTYPE} -Dstrip=true build
+    - meson --cross-file=${CROSSFILE} --buildtype=${BUILDTYPE} ${MESON_FLAGS} build
     - env DESTDIR=sysroot meson install -C build
   artifacts:
     paths:
       - build/sysroot/
+
+release-fb:
+  extends: release
+  variables:
+    MESON_FLAGS: '-Dstrip=true -Dlvgl:color_depth=16 -Dlv_drivers:display_backend=fb'
