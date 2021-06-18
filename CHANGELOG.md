@@ -15,8 +15,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
  - handling of color depth < 32
-
-### Fixed
  - lv_lib_png: pin lvgl v7 compatible release branch
 
 ### Removed
