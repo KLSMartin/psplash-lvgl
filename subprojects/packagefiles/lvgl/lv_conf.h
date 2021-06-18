@@ -23,14 +23,6 @@
 #define LV_HOR_RES_MAX          (800)
 #define LV_VER_RES_MAX          (480)
 
-/* Color depth:
- * - 1:  1 byte per pixel
- * - 8:  RGB332
- * - 16: RGB565
- * - 32: ARGB8888
- */
-#define LV_COLOR_DEPTH     32
-
 /* 1: Enable screen transparency.
  * Useful for OSD or other overlapping GUIs.
  * Requires `LV_COLOR_DEPTH = 32` colors and the screen's style should be modified: `style.body.opa = ...`*/
