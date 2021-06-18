@@ -111,16 +111,14 @@ static lv_obj_t *interactive_progress_bar_create(lv_obj_t *parent, progress_indi
   background_create(parent);
   lv_obj_t *bar = lv_bar_create(parent, NULL);
   data->ui.bar = bar;
-  lv_color_t indicator_color = { .full = configuration.progress_bar.colors.indicator };
-  lv_color_t background_color = { .full = configuration.progress_bar.colors.background };
 
   // use custom style
   lv_style_init(&progress_indicator_data.ui.styles.bg);
-  lv_style_set_bg_color(&progress_indicator_data.ui.styles.bg, LV_STATE_DEFAULT, background_color);
+  lv_style_set_bg_color(&progress_indicator_data.ui.styles.bg, LV_STATE_DEFAULT, configuration.progress_bar.colors.background);
   lv_style_set_bg_opa(&progress_indicator_data.ui.styles.bg, LV_STATE_DEFAULT, LV_OPA_COVER);
   lv_obj_add_style(bar, LV_BAR_PART_BG, &progress_indicator_data.ui.styles.bg);
   lv_style_init(&progress_indicator_data.ui.styles.indicator);
-  lv_style_set_bg_color(&progress_indicator_data.ui.styles.indicator, LV_STATE_DEFAULT, indicator_color);
+  lv_style_set_bg_color(&progress_indicator_data.ui.styles.indicator, LV_STATE_DEFAULT, configuration.progress_bar.colors.indicator);
   lv_style_set_bg_opa(&progress_indicator_data.ui.styles.indicator, LV_STATE_DEFAULT, LV_OPA_COVER);
   lv_obj_add_style(bar, LV_BAR_PART_INDIC, &progress_indicator_data.ui.styles.indicator);
 
@@ -267,6 +265,8 @@ void psplash_main(int pipe_fd, int timeout)
   char *end;
   char *cmd;
   char command[2048];
+
+  progress_indicator_data.progress = 20.0;
 
   tv.tv_sec = timeout;
   tv.tv_usec = 0;
