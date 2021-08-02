@@ -67,17 +67,21 @@ typedef struct
   } ui;
 } progress_indicator_data_t;
 
-typedef struct
-{
-  lv_coord_t width;
-  lv_coord_t height;
-} size;
-
 /* === Static members ======================================================= */
 static const char * const PSPLASH_FIFO = "psplash_fifo";
+
+/* work around lv_drivers/disp inconsistencies between drm and fb backends */
 static struct {
-  uint32_t width, height;
+#if USE_FBDEV
+  uint32_t
+#elif USE_DRM
+  lv_coord_t
+#else
+  int
+#endif
+  width, height;
 } display_size;
+
 static progress_indicator_data_t progress_indicator_data;
 
 /* === Private function prototypes ========================================== */

@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Changed
  - set the progress idicator's (bar) border size to 0.
 
+### Fixed
+ - lv_drivers: fix variables' types, which depend on the configured display backend.
+
 
 ## [1.0.0] - 2021-06-18
 ### Added
