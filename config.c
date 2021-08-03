@@ -57,7 +57,15 @@ void read_in_configuration(const char *configuration_file_path)
     if (config_lookup_int(&libconfig_handle, "progress_bar.layout.offset.y", &configuration.progress_bar.layout.offset.y) != CONFIG_TRUE)
         configuration.progress_bar.layout.offset.y = 0;
     _read_color(&libconfig_handle, "progress_bar.colors.background", &configuration.progress_bar.colors.background);
+    _read_color(&libconfig_handle, "progress_bar.colors.background_border", &configuration.progress_bar.colors.background_border);
     _read_color(&libconfig_handle, "progress_bar.colors.indicator", &configuration.progress_bar.colors.indicator);
+    _read_color(&libconfig_handle, "progress_bar.colors.indicator_border", &configuration.progress_bar.colors.indicator_border);
+    if (config_lookup_int(&libconfig_handle, "progress_bar.layout.indicator.border_width", &configuration.progress_bar.layout.indicator.border_width) != CONFIG_TRUE)
+        configuration.progress_bar.layout.indicator.border_width = 0;
+    if (config_lookup_int(&libconfig_handle, "progress_bar.layout.background.border_width", &configuration.progress_bar.layout.background.border_width) != CONFIG_TRUE)
+        configuration.progress_bar.layout.background.border_width = 0;
+    if (config_lookup_int(&libconfig_handle, "progress_bar.layout.background.padding", &configuration.progress_bar.layout.background.padding) != CONFIG_TRUE)
+        configuration.progress_bar.layout.background.padding = 0;
     config_destroy(&libconfig_handle);
     return;
 _init_defaults_return:
@@ -66,8 +74,13 @@ _init_defaults_return:
     configuration.progress_bar.layout.height = 20;
     configuration.progress_bar.layout.offset.x = 0;
     configuration.progress_bar.layout.offset.y = 0;
+    configuration.progress_bar.layout.background.border_width = 1;
+    configuration.progress_bar.layout.background.padding = 1;
+    configuration.progress_bar.layout.indicator.border_width = 0;
     configuration.progress_bar.colors.background = lv_color_hex(0xffffffff);
+    configuration.progress_bar.colors.background_border = lv_color_hex(0xffffffff);
     configuration.progress_bar.colors.indicator = lv_color_hex(0xffcccccc);
+    configuration.progress_bar.colors.indicator_border = lv_color_hex(0xffcccccc);
     strncpy(configuration.background.image_path, "/usr/share/logo.png", path_size_minus_one);
     configuration.background.image_path[path_size_minus_one] = '\0';
 }

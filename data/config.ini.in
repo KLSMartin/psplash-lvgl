@@ -4,12 +4,21 @@ background = {
 progress_bar = {
     colors = {
         background = { r = 255, g = 255, b = 255 }
+        background_border = { r = 255, g = 255, b = 255 }
         indicator = { r = 255, g = 0, b = 0 }
+        indicator_border = { r = 255, g = 0, b = 0 }
     }
     layout =
     {
         width = 200
         height = 20
         offset = { x = 0, y = -100 }
+        background = {
+            padding = 2
+            border_size = 2
+        }
+        indicator = {
+            border_size = 0
+        }
     }
 }
