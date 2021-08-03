@@ -272,8 +272,6 @@ void psplash_main(int pipe_fd, int timeout)
   char *cmd;
   char command[2048];
 
-  progress_indicator_data.progress = 20.0;
-
   tv.tv_sec = timeout;
   tv.tv_usec = 0;
 

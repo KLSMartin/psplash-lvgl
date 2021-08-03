@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
  - lv_drivers: fix variables' types, which depend on the configured display backend.
+ - accidental initial progress indicator value of 20%.
 
 
 ## [1.0.0] - 2021-06-18
