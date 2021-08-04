@@ -9,10 +9,21 @@ typedef struct {
             struct {
                 int x, y;
             } offset;
+            struct {
+                int border_width;
+                int padding;
+            } background;
+            struct {
+                int border_width;
+                int padding;
+            } indicator;
             int width, height;
         } layout;
         struct {
-            lv_color_t background, indicator;
+            lv_color_t background;
+            lv_color_t background_border;
+            lv_color_t indicator;
+            lv_color_t indicator_border;
         } colors;
     } progress_bar;
     struct {

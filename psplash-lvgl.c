@@ -67,17 +67,21 @@ typedef struct
   } ui;
 } progress_indicator_data_t;
 
-typedef struct
-{
-  lv_coord_t width;
-  lv_coord_t height;
-} size;
-
 /* === Static members ======================================================= */
 static const char * const PSPLASH_FIFO = "psplash_fifo";
+
+/* work around lv_drivers/disp inconsistencies between drm and fb backends */
 static struct {
-  uint32_t width, height;
+#if USE_FBDEV
+  uint32_t
+#elif USE_DRM
+  lv_coord_t
+#else
+  int
+#endif
+  width, height;
 } display_size;
+
 static progress_indicator_data_t progress_indicator_data;
 
 /* === Private function prototypes ========================================== */
@@ -116,10 +120,15 @@ static lv_obj_t *interactive_progress_bar_create(lv_obj_t *parent, progress_indi
   lv_style_init(&progress_indicator_data.ui.styles.bg);
   lv_style_set_bg_color(&progress_indicator_data.ui.styles.bg, LV_STATE_DEFAULT, configuration.progress_bar.colors.background);
   lv_style_set_bg_opa(&progress_indicator_data.ui.styles.bg, LV_STATE_DEFAULT, LV_OPA_COVER);
+  lv_style_set_pad_all(&progress_indicator_data.ui.styles.bg, LV_STATE_DEFAULT, configuration.progress_bar.layout.background.padding);
+  lv_style_set_border_width(&progress_indicator_data.ui.styles.bg, LV_STATE_DEFAULT, configuration.progress_bar.layout.background.border_width);
+  lv_style_set_border_color(&progress_indicator_data.ui.styles.bg, LV_STATE_DEFAULT, configuration.progress_bar.colors.background_border);
   lv_obj_add_style(bar, LV_BAR_PART_BG, &progress_indicator_data.ui.styles.bg);
   lv_style_init(&progress_indicator_data.ui.styles.indicator);
   lv_style_set_bg_color(&progress_indicator_data.ui.styles.indicator, LV_STATE_DEFAULT, configuration.progress_bar.colors.indicator);
   lv_style_set_bg_opa(&progress_indicator_data.ui.styles.indicator, LV_STATE_DEFAULT, LV_OPA_COVER);
+  lv_style_set_border_width(&progress_indicator_data.ui.styles.indicator, LV_STATE_DEFAULT, configuration.progress_bar.layout.indicator.border_width);
+  lv_style_set_border_color(&progress_indicator_data.ui.styles.indicator, LV_STATE_DEFAULT, configuration.progress_bar.colors.indicator_border);
   lv_obj_add_style(bar, LV_BAR_PART_INDIC, &progress_indicator_data.ui.styles.indicator);
 
   lv_obj_set_size(bar, configuration.progress_bar.layout.width, configuration.progress_bar.layout.height);
@@ -265,8 +274,6 @@ void psplash_main(int pipe_fd, int timeout)
   char *end;
   char *cmd;
   char command[2048];
-
-  progress_indicator_data.progress = 20.0;
 
   tv.tv_sec = timeout;
   tv.tv_usec = 0;

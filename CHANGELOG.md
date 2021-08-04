@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## [1.1.0] - 2021-08-04
+### Added
+ - subprojects:lv_drivers: disp/drm: execution time device configuration. Allow users to specify the DRM device to use via the environment variable `DRM_DEVICE`.
+ - config.ini: properties to configure the progress bar's background's:
+   * border_width
+   * color
+   * padding (the distance between the background's and the indicator's rectangle).
+ - config.ini: properties to configure the progress bar's indicator's:
+   * border_width
+   * color
+
+## Changed
+ - set the progress idicator's (bar) border size to 0.
+
+### Fixed
+ - lv_drivers: fix variables' types, which depend on the configured display backend.
+ - accidental initial progress indicator value of 20%.
+
+
 ## [1.0.0] - 2021-06-18
 ### Added
  - install runtime configuration files.
