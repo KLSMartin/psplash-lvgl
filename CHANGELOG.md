@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+
+## [1.1.0] - 2021-08-04
 ### Added
  - subprojects:lv_drivers: disp/drm: execution time device configuration. Allow users to specify the DRM device to use via the environment variable `DRM_DEVICE`.
  - config.ini: properties to configure the progress bar's background's:
