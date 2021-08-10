@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## [1.1.1] - 2021-08-10
+### Fixed
+ - subprojects:lv_drivers: disp/fb: fix initilization routine to make sure the legacy fb device is actually putting out graphics.
+
+
 ## [1.1.0] - 2021-08-04
 ### Added
  - subprojects:lv_drivers: disp/drm: execution time device configuration. Allow users to specify the DRM device to use via the environment variable `DRM_DEVICE`.
