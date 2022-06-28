@@ -1,21 +1,17 @@
 stages:
   - build
 
-image: registry.klsmartin-development.de:443/platform/meta-kls:2.3.1
+image: registry.klsmartin-development.de:443/platform/meta-kls/toolchain:2.4.7
 
 release:
   tags: [ docker ]
   stage: build
   variables:
     BUILDTYPE: 'release'
-    CROSSFILE: 'meta-kls_2.3.1.cross'
     MESON_FLAGS: '-Dstrip=true -Dlvgl:color_depth=16'
-  before_script:
-    # use the most recent meson version.
-    - pip install git+https://github.com/mesonbuild/meson.git ninja
   script:
-    - meson --cross-file=${CROSSFILE} --buildtype=${BUILDTYPE} ${MESON_FLAGS} build
-    - env DESTDIR=sysroot meson install -C build
+    - meson --buildtype=${BUILDTYPE} ${MESON_FLAGS} build
+    - env DESTDIR=sysroot ninja -C build install
   artifacts:
     paths:
       - build/sysroot/
