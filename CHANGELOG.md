@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## [1.1.2] - 2022-06-28
+### Fixed
+ - subprojects:lv_lib_png: pin down specific revision.
+
+
 ## [1.1.1] - 2021-08-10
 ### Fixed
  - subprojects:lv_drivers: disp/fb: fix initilization routine to make sure the legacy fb device is actually putting out graphics.
