@@ -46,10 +46,10 @@
 #endif
 
 #if DEBUG
-#define DBG(x, a...) \
-   { printf ( __FILE__ ":%d,%s() " x "\n", __LINE__, __func__, ##a); }
+#define DBG(x, ...) \
+   { printf ( __FILE__ ":%d,%s() " x "\n", __LINE__, __func__, ##__VA_ARGS__); }
 #else
-#define DBG(x, a...) do {} while (0)
+#define DBG(x, ...) do {} while (0)
 #endif
 
 /* === Typedefs ======================================================= */
