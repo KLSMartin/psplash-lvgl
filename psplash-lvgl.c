@@ -138,7 +138,10 @@ static lv_obj_t *interactive_progress_bar_create(lv_obj_t *parent, progress_indi
   return bar;
 }
 
-static void *ui_update_thread_cb(void *data) {
+static void *ui_update_thread_cb(void *data)
+{
+  (void)data;
+
   while (1) {
     lv_tick_inc(1);
     lv_task_handler();
@@ -221,6 +224,9 @@ static void ui_create()
 
 void psplash_draw_msg(const char *msg)
 {
+#if !DEBUG
+  (void)msg;
+#endif
   DBG("displaying '%s'\n", msg);
 }
 
@@ -351,6 +357,9 @@ void psplash_main(int pipe_fd, int timeout)
 
 int main(int argc, char **argv)
 {
+  (void)argc;
+  (void)argv;
+
   char *rundir;
   int pipe_fd, ret = 0;
   pthread_t ui_update_thread;
