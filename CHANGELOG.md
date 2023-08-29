@@ -5,6 +5,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+ - build: enable warnings/werror, fix several warnings and ignore some -Werrors on subprojects
+ - main: allow setting config file path as 1. argument.
+
+### Changed
+ - lvgl/lv_drivers: update to 7.11.0 (wrap)
+ - lv_lib_png: update to latest v7 branch revision
+ - libconfig: update to 1.7.3 (wrap), fix local wrap build
+ - deps: remove libsystemd dependency, add implementation of sd_notify("READY=1")
+ - optimization: lvgl/lv_drivers: remove unused features and the c-files from build definitions
+
+### Fixed
+ - lv_drivers: fbdev: ignore unblanking failure. Necessary for RaspberryPi early fb driver.
+ - libconfig: fix local wrap build
+ - main: fix potential race in init, not showing initial screen before exit.
 
 
 ## [1.1.2] - 2022-06-28
