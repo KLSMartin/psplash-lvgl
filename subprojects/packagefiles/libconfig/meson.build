@@ -1,4 +1,5 @@
 project('libconfig', 'c',
+  version: '1.4.10',
   meson_version : '>=0.57.2',
 )
 

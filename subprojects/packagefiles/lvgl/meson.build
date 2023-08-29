@@ -1,4 +1,6 @@
-project('lvgl', 'c')
+project('lvgl', 'c',
+    version: '7.11.0',
+)
 
 sources = [
     'src/lv_core/lv_disp.c',

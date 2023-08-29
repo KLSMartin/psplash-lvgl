@@ -1,5 +1,6 @@
 [wrap-git]
+# when changing, add the correct version into the supplied meson.build in subprojects/packagefiles/lv_drivers/
 url = https://github.com/lvgl/lv_drivers.git
-revision = v7.10.1
+revision = v7.11.0
 
 patch_directory = lv_drivers

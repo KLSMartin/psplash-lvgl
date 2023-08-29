@@ -1,4 +1,5 @@
 project('lv_drivers', 'c',
+  version: '7.11.0',
   meson_version : '>=0.58.1',
 )
 
