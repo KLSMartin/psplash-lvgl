@@ -1,0 +1,7 @@
+# ignore every folder
+/*/
+
+# except
+!/.gitignore
+!/packagefiles/
+!/*.wrap
