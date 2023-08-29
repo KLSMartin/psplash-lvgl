@@ -357,14 +357,18 @@ void psplash_main(int pipe_fd, int timeout)
 
 int main(int argc, char **argv)
 {
-  (void)argc;
-  (void)argv;
-
   char *rundir;
   int pipe_fd, ret = 0;
   pthread_t ui_update_thread;
 
-  read_in_configuration("config.ini");
+  if (argc == 1)
+    read_in_configuration("config.ini");
+  else if (argc == 2)
+    read_in_configuration(argv[1]);
+  else {
+    fprintf(stderr, "usage: psplash-lvgl [config.ini]\n");
+    exit(1);
+  }
 
   rundir = getenv("PSPLASH_FIFO_DIR");
 
