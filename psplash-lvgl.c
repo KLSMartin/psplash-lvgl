@@ -1,4 +1,4 @@
-/* 
+/*
  *  psplash-lvgl
  *
  *  Copyright (c) 2021 Leif Middelschulte <leif.middelschulte@klsmartin.com>
@@ -12,10 +12,6 @@
  *
  */
 
-#ifdef HAVE_SYSTEMD
-#include <systemd/sd-daemon.h>
-#endif
-
 /* === Includes ============================================================= */
 /* standard includes */
 #include <stdlib.h>
@@ -28,11 +24,13 @@
 #include <sys/stat.h>
 #include <errno.h>
 
+#include <sys/socket.h>
+#include <sys/un.h>
+
 /* lvgl includes */
 #include "lvgl.h"
 #include "lv_png.h"
 
-// #include "themes/apply_theme.h"
 #include "drm.h"
 #include "monitor.h"
 #include "fbdev.h"
@@ -355,6 +353,83 @@ void psplash_main(int pipe_fd, int timeout)
   return;
 }
 
+/**
+ * @brief Notify systemd deamon, in case service is started with type=notify
+ */
+static int sdnotify_ready(void)
+{
+  int ret;
+  const char *sock_path;
+  size_t plen;
+  struct sockaddr_un sockaddr = {
+      .sun_family = AF_UNIX,
+      .sun_path = { 0 },
+  };
+  size_t sockaddr_sz = offsetof(struct sockaddr_un, sun_path);
+
+  static int notify_socket = -EBADF;
+
+  /* if this does not exist, not started via system or not type=notify */
+  sock_path = getenv("NOTIFY_SOCKET");
+  if (!sock_path)
+    return 0;
+
+  if (((*sock_path != '/') && (*sock_path != '@')))
+    return -EPROTO;
+
+  plen = strlen(sock_path);
+  if (plen < 2)
+    return -EINVAL;
+
+  if ((plen + 1) > sizeof(sockaddr.sun_path))
+    return -ENAMETOOLONG;
+
+  if (*sock_path == '/') {
+    /* filesystem socket */
+
+    /* copy *with* trailing NUL byte */
+    memcpy(sockaddr.sun_path, sock_path, plen + 1);
+
+    /* including trailing NUL byte */
+    sockaddr_sz += (plen + 1);
+
+  } else if (*sock_path == '@') {
+    /* abstract namespace socket */
+
+    /* First byte stays/replaced by \0 byte for abstract socket. Copy with trailing NUL byte */
+    memcpy(sockaddr.sun_path + 1, sock_path + 1, plen);
+
+    /* trailing NUL byte excluded in size */
+    sockaddr_sz += plen;
+
+  } else {
+    return -EINVAL;
+  }
+
+  if (notify_socket == -EBADF) {
+    notify_socket = socket(AF_UNIX, SOCK_DGRAM, 0);
+    if (notify_socket == -1) {
+      ret = -errno;
+      fprintf(stderr, "Failed to open NOTIFY_SOCKET=%s: %s\n", sock_path, strerror(-ret));
+      notify_socket = -EBADF;
+      return ret;
+    }
+  }
+
+  ret = sendto(notify_socket, "READY=1", sizeof("READY=1"), 0, (const struct sockaddr *) &sockaddr, sockaddr_sz);
+  if (ret == -1) {
+    ret = -errno;
+    fprintf(stderr, "Failed to notify ready to NOTIFY_SOCKET=%s: %s\n", sock_path, strerror(-ret));
+    close(notify_socket);
+    notify_socket = -EBADF;
+    return ret;
+  }
+
+  /* keep notify_socket open */
+  return 0;
+}
+
+
 int main(int argc, char **argv)
 {
   char *rundir;
@@ -402,9 +477,7 @@ int main(int argc, char **argv)
     goto unlink_fifo_exit;
   }
 
-#ifdef HAVE_SYSTEMD
-  sd_notify(0, "READY=1");
-#endif
+  sdnotify_ready();
 
   init_lvgl();
   ui_create();
