@@ -32,23 +32,7 @@ configuration_file = configure_file(
 sources = [
     'display/drm.c',
     'display/fbdev.c',
-    'display/GC9A01.c',
-    'display/ILI9341.c',
     'display/monitor.c',
-    'display/R61581.c',
-    'display/SHARP_MIP.c',
-    'display/SSD1963.c',
-    'display/ST7565.c',
-    'display/UC1610.c',
-    'gtkdrv/gtkdrv.c',
-    'indev/AD_touch.c',
-    'indev/evdev.c',
-    'indev/FT5406EE8.c',
-    'indev/keyboard.c',
-    'indev/libinput.c',
-    'indev/mouse.c',
-    'indev/mousewheel.c',
-    'indev/XPT2046.c',
     'win_drv.c',
 ]
 add_project_arguments(
@@ -67,7 +51,6 @@ dependencies += dependency(
 
 inc_dirs = [
     'display',
-    'indev',
 ]
 # '.' implies both: the current source dir _and_ the current build dir (to which `configure_file` outputs files).
 # The backend header files include lv_drv_conf.h, so we need to provide that.
