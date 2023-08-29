@@ -1,8 +1,8 @@
 [wrap-file]
 # when changing, add the correct version into the supplied meson.build in subprojects/packagefiles/libconfig
-directory = libconfig-1.4.10
-source_filename = libconfig-1.4.10.tar.gz
-source_url = http://www.hyperrealm.com/packages/libconfig-1.4.10.tar.gz
-source_hash = c04cc443fb02a548502d737fb7d9593e9bc3a6e41fac696dfe65d66ca4f9d0e1
+directory = libconfig-1.7.3
+source_filename = libconfig-1.7.3.tar.gz
+source_url = https://hyperrealm.github.io/libconfig/dist/libconfig-1.7.3.tar.gz
+source_hash = 545166d6cac037744381d1e9cc5a5405094e7bfad16a411699bcff40bbb31ee7
 
 patch_directory = libconfig
