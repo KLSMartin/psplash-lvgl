@@ -54,6 +54,8 @@ sources = [
 add_project_arguments(
     '-DLV_CONF_INCLUDE_SIMPLE',
     '-DLV_LVGL_H_INCLUDE_SIMPLE',
+    '-Wno-unused-parameter',
+    '-Wno-error=unused-parameter',
     language: 'c'
 )
 dependencies += dependency(
