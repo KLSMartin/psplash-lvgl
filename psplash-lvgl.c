@@ -53,7 +53,7 @@
 /* === Typedefs ======================================================= */
 typedef struct
 {
-  float progress;
+  int progress;
   struct
   {
     lv_task_t *update_task;
@@ -133,6 +133,7 @@ static lv_obj_t *interactive_progress_bar_create(lv_obj_t *parent, progress_indi
   lv_obj_align(bar, NULL, LV_ALIGN_IN_BOTTOM_MID, configuration.progress_bar.layout.offset.x, configuration.progress_bar.layout.offset.y);
   // normalize scale [0 to 100]
   lv_bar_set_range(bar, 0, 100);
+  lv_bar_set_start_value(bar, 0, LV_ANIM_OFF);
   return bar;
 }
 
@@ -481,8 +482,11 @@ int main(int argc, char **argv)
 
   init_lvgl();
   ui_create();
+
+  /* call task handler once to show ui, to prevent race of update thread against psplash_main exiting directly */
+  lv_task_handler();
+
   pthread_create(&ui_update_thread, NULL, ui_update_thread_cb, NULL);
-  psplash_draw_progress(0);
 
   psplash_main(pipe_fd, 0);
 
