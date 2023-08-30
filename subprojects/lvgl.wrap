@@ -1,5 +1,6 @@
 [wrap-git]
 url = https://github.com/lvgl/lvgl.git
-revision = v7.10.1
+# when changing, add the correct version into the supplied meson.build in subprojects/packagefiles/lvgl
+revision = v7.11.0
 
 patch_directory = lvgl

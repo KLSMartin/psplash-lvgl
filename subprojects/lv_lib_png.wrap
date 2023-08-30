@@ -2,6 +2,6 @@
 url = https://github.com/lvgl/lv_lib_png.git
 # we follow the `v7`-branch, but it was recently broken
 # revision = release/v7
-revision = 7ff6168764893d658375a9c3173337506ff4eb1b
+revision = d42282b8673cffdc9010289e8ef149bcb6ec013f
 
 patch_directory = lv_lib_png

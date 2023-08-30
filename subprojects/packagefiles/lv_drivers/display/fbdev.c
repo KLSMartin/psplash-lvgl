@@ -90,10 +90,6 @@ void fbdev_init(void)
     }
     printf("The framebuffer device was opened successfully.\n");
 
-    if (ioctl(fbfd, FBIOBLANK, FB_BLANK_UNBLANK) != 0) {
-        perror("ioctl(FBIOBLANK)");
-        return;
-    }
 #if USE_BSD_FBDEV
     struct fbtype fb;
     unsigned line_length;
@@ -147,6 +143,9 @@ void fbdev_init(void)
 
     printf("The framebuffer device was mapped to memory successfully.\n");
 
+    if (ioctl(fbfd, FBIOBLANK, FB_BLANK_UNBLANK) != 0) {
+        perror("ioctl(FBIOBLANK)");
+    }
 }
 
 void fbdev_exit(void)

@@ -1,7 +1,11 @@
 project('psplash-lvgl',
     'c',
-    version: '1.1.2',
-    meson_version: '>=0.55.0' # required to allow patches for wrap-git mode.
+    version: '1.2.0',
+    meson_version: '>=0.55.0', # required to allow patches for wrap-git mode.
+    default_options: [
+        'warning_level=3',
+        'werror=true',
+    ],
 )
 
 # UI toolkit
@@ -32,12 +36,10 @@ dependencies = [
     ),
 ]
 
-# system integration
-systemd = dependency('libsystemd', required: false)
-if systemd.found()
-    add_project_arguments('-DHAVE_SYSTEMD', language : 'c')
-    dependencies += [systemd]
-endif
+sources = [
+    'psplash-lvgl.c',
+    'config.c',
+]
 
 pthreads = dependency('threads')
 dependencies += pthreads
@@ -50,13 +52,11 @@ if get_option('debug')
     add_project_arguments('-DDEBUG=1', language : 'c')
 endif
 
+
 executable(
     'psplash-lvgl',
     dependencies: dependencies,
-    sources: [
-        'psplash-lvgl.c',
-        'config.c',
-    ],
+    sources: sources,
     install: true
 )
 configure_file(

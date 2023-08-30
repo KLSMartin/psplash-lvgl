@@ -464,7 +464,7 @@ static int drm_find_connector(void)
 		drmModeFreeEncoder(enc);
 	}
 
-	drm_dev.crtc_idx = -1;
+	drm_dev.crtc_idx = (uint32_t)-1;
 
 	for (i = 0; i < res->count_crtcs; ++i) {
 		if (drm_dev.crtc_id == res->crtcs[i]) {
@@ -473,7 +473,7 @@ static int drm_find_connector(void)
 		}
 	}
 
-	if (drm_dev.crtc_idx == -1) {
+	if (drm_dev.crtc_idx == (uint32_t)-1) {
 		err("drm: CRTC not found");
 		goto free_res;
 	}
@@ -713,8 +713,8 @@ void drm_wait_vsync(lv_disp_drv_t *disp_drv)
 void drm_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color_p)
 {
 	struct drm_buffer *fbuf = drm_dev.cur_bufs[1];
-	lv_coord_t w = (area->x2 - area->x1 + 1);
-	lv_coord_t h = (area->y2 - area->y1 + 1);
+	uint32_t w = (area->x2 - area->x1 + 1);
+	uint32_t h = (area->y2 - area->y1 + 1);
 	int i, y;
 
 	dbg("x %d:%d y %d:%d w %d h %d", area->x1, area->x2, area->y1, area->y2, w, h);
