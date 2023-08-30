@@ -158,7 +158,7 @@ typedef void * lv_anim_user_data_t;
 #define LV_USE_PATTERN  1
 
 /*1: enable value string drawing on rectangles*/
-#define LV_USE_VALUE_STR    1
+#define LV_USE_VALUE_STR    0
 
 /* 1: Use other blend modes than normal (`LV_BLEND_MODE_...`)*/
 #define LV_USE_BLEND_MODES      1
@@ -170,7 +170,7 @@ typedef void * lv_anim_user_data_t;
 #define LV_USE_IMG_TRANSFORM    1
 
 /* 1: Enable object groups (for keyboard/encoder navigation) */
-#define LV_USE_GROUP            1
+#define LV_USE_GROUP            0
 #if LV_USE_GROUP
 typedef void * lv_group_user_data_t;
 #endif  /*LV_USE_GROUP*/
@@ -203,7 +203,7 @@ typedef void * lv_fs_drv_user_data_t;
 #endif
 
 /*1: Add a `user_data` to drivers and objects*/
-#define LV_USE_USER_DATA        1
+#define LV_USE_USER_DATA        0
 
 /*1: Show CPU usage and FPS count in the right bottom corner*/
 #define LV_USE_PERF_MONITOR     0
@@ -369,7 +369,7 @@ typedef void * lv_indev_drv_user_data_t;            /*Type of user data in the i
 #define LV_FONT_MONTSERRAT_8     0
 #define LV_FONT_MONTSERRAT_10    0
 #define LV_FONT_MONTSERRAT_12    0
-#define LV_FONT_MONTSERRAT_14    1
+#define LV_FONT_MONTSERRAT_14    0
 #define LV_FONT_MONTSERRAT_16    0
 #define LV_FONT_MONTSERRAT_18    0
 #define LV_FONT_MONTSERRAT_20    0
@@ -418,7 +418,7 @@ typedef void * lv_indev_drv_user_data_t;            /*Type of user data in the i
 #define LV_USE_FONT_COMPRESSED 1
 
 /* Enable subpixel rendering */
-#define LV_USE_FONT_SUBPX 1
+#define LV_USE_FONT_SUBPX 0
 #if LV_USE_FONT_SUBPX
 /* Set the pixel order of the display.
  * Important only if "subpx fonts" are used.
@@ -465,10 +465,10 @@ typedef void * lv_font_user_data_t;
 #define LV_THEME_DEFAULT_COLOR_PRIMARY      lv_color_hex(0x01a2b1)
 #define LV_THEME_DEFAULT_COLOR_SECONDARY    lv_color_hex(0x44d1b6)
 #define LV_THEME_DEFAULT_FLAG               0
-#define LV_THEME_DEFAULT_FONT_SMALL         &lv_font_montserrat_14
-#define LV_THEME_DEFAULT_FONT_NORMAL        &lv_font_montserrat_14
-#define LV_THEME_DEFAULT_FONT_SUBTITLE      &lv_font_montserrat_14
-#define LV_THEME_DEFAULT_FONT_TITLE         &lv_font_montserrat_14
+#define LV_THEME_DEFAULT_FONT_SMALL         NULL
+#define LV_THEME_DEFAULT_FONT_NORMAL        NULL
+#define LV_THEME_DEFAULT_FONT_SUBTITLE      NULL
+#define LV_THEME_DEFAULT_FONT_TITLE         NULL
 
 /*=================
  *  Text settings
@@ -567,13 +567,13 @@ typedef void * lv_obj_user_data_t;
 #define LV_USE_BAR      1
 
 /*Button (dependencies: lv_cont*/
-#define LV_USE_BTN      1
+#define LV_USE_BTN      0
 
 /*Button matrix (dependencies: -)*/
 #define LV_USE_BTNMATRIX     0
 
 /*Calendar (dependencies: -)*/
-#define LV_USE_CALENDAR 1
+#define LV_USE_CALENDAR 0
 #if LV_USE_CALENDAR
 #  define LV_CALENDAR_WEEK_STARTS_MONDAY    0
 #endif
@@ -591,7 +591,7 @@ typedef void * lv_obj_user_data_t;
 #endif
 
 /*Container (dependencies: -*/
-#define LV_USE_CONT     1
+#define LV_USE_CONT     0
 
 /*Color picker (dependencies: -*/
 #define LV_USE_CPICKER   0
@@ -671,7 +671,7 @@ typedef void * lv_obj_user_data_t;
 #define LV_USE_MSGBOX     0
 
 /*Page (dependencies: lv_cont)*/
-#define LV_USE_PAGE     1
+#define LV_USE_PAGE     0
 #if LV_USE_PAGE != 0
 /*Focus default animation time [ms] (0: no animation)*/
 #  define LV_PAGE_DEF_ANIM_TIME     400
@@ -733,7 +733,7 @@ typedef void * lv_obj_user_data_t;
 #endif
 
 /*Window (dependencies: lv_cont, lv_btn, lv_label, lv_img, lv_page)*/
-#define LV_USE_WIN      1
+#define LV_USE_WIN      0
 
 /*==================
  * Non-user section
