@@ -1,6 +1,6 @@
 project('psplash-lvgl',
     'c',
-    version: '1.2.0',
+    version: '1.2.9999',
     meson_version: '>=0.55.0', # required to allow patches for wrap-git mode.
     default_options: [
         'warning_level=3',
