@@ -48,3 +48,24 @@ This bootsplash (currently) ignores:
  - screen rotation
  - screen clearance
  - `MSG` commands
+
+
+# Simulator builds
+
+It is possible to build the program for desktop. It requires the `SDL2` library.
+
+To build:
+```bash
+meson setup build && ninja -C build
+```
+
+For testing, customize the FIFO and `config.ini` locations:
+```
+# fifo and config.ini in run subdir
+PSPLASH_FIFO_DIR=$(pwd)/run/psplash_fifo ./build/psplash-lvgl ./run/config.ini &
+
+# send messages to fifo
+echo -e 'PROGRESS 20\0' > run/psplash_fifo
+
+echo -e 'QUIT\0' > run/psplash_fifo
+```
