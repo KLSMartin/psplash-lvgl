@@ -252,7 +252,13 @@ parse_command(char *string)
     char *arg = strtok(NULL, "\0");
     if (arg)
     {
-      psplash_draw_progress(atoi(arg));
+      char *endptr = NULL;
+      long int val;
+      errno = 0;    /* To distinguish success/failure after call */
+      val = strtol(arg, &endptr, 10);
+      if ((errno == 0) && endptr && (*endptr == '\0') && (val >= 0) && (val <= 100)) {
+        psplash_draw_progress(val);
+      }
     }
   }
   else if (!strcmp(command, "MSG"))
