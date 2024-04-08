@@ -480,8 +480,8 @@ int main(int argc, char **argv)
 
   pthread_create(&command_thread, NULL, command_thread_cb, (void*)&pipe_fd);
 
-  while (usleep(1000) == 0 && pthread_tryjoin_np(command_thread, NULL) == EBUSY) {
-    lv_tick_inc(1);
+  while (usleep(5000) == 0 && pthread_tryjoin_np(command_thread, NULL) == EBUSY) {
+    lv_tick_inc(5);
     lv_task_handler();
     update_ui();
   }
