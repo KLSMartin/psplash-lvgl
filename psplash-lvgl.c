@@ -280,18 +280,14 @@ parse_command(char *string)
   return 0;
 }
 
-void psplash_main(int pipe_fd, int timeout)
+void psplash_main(int pipe_fd)
 {
   int err;
   ssize_t length = 0;
   fd_set descriptors;
-  struct timeval tv;
   char *end;
   char *cmd;
   char command[2048];
-
-  tv.tv_sec = timeout;
-  tv.tv_usec = 0;
 
   FD_ZERO(&descriptors);
   FD_SET(pipe_fd, &descriptors);
@@ -300,10 +296,7 @@ void psplash_main(int pipe_fd, int timeout)
 
   while (1)
   {
-    if (timeout != 0)
-      err = select(pipe_fd + 1, &descriptors, NULL, NULL, &tv);
-    else
-      err = select(pipe_fd + 1, &descriptors, NULL, NULL, NULL);
+    err = select(pipe_fd + 1, &descriptors, NULL, NULL, NULL);
 
     if (err <= 0)
     {
@@ -353,9 +346,6 @@ void psplash_main(int pipe_fd, int timeout)
 
   out:
     end = &command[length];
-
-    tv.tv_sec = timeout;
-    tv.tv_usec = 0;
 
     FD_ZERO(&descriptors);
     FD_SET(pipe_fd, &descriptors);
@@ -492,7 +482,7 @@ int main(int argc, char **argv)
 
   pthread_create(&ui_update_thread, NULL, ui_update_thread_cb, NULL);
 
-  psplash_main(pipe_fd, 0);
+  psplash_main(pipe_fd);
 
 unlink_fifo_exit:
   unlink(PSPLASH_FIFO);
