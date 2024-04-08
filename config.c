@@ -5,12 +5,22 @@
 
 configuration_t configuration;
 
+static uint8_t clip_color(int val)
+{
+    if (val < 0) {
+        return 0;
+    } else if (val > 255) {
+        return 255;
+    }
+    return (uint8_t)val;
+}
+
 static void _read_color(config_t *libconfig_handle, const char *path_prefix, lv_color_t *color)
 {
     char path_buf[256];
     const int default_color_val = 0x00;
     int r, g, b;
-    
+
     snprintf(path_buf, sizeof(path_buf)-1, "%s.r", path_prefix);
     if (config_lookup_int(libconfig_handle, path_buf, &r) != CONFIG_TRUE) {
         fprintf(stderr, "configuration reader: Could not find a valid value at \"%s\". Defaulting to 0x%x.\n", path_buf, default_color_val);
@@ -27,7 +37,7 @@ static void _read_color(config_t *libconfig_handle, const char *path_prefix, lv_
         b = default_color_val;
     }
 
-    *color = lv_color_make(r, g, b);
+    *color = lv_color_make(clip_color(r), clip_color(g), clip_color(b));
 }
 
 void read_in_configuration(const char *configuration_file_path)
