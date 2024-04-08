@@ -209,7 +209,7 @@ static void init_lvgl()
   /* propaget the runtime determined screen size */
   disp_drv.hor_res = display_size.width;
   disp_drv.ver_res = display_size.height;
-  printf("Assuming a display size of %dx%d\n", disp_drv.hor_res, disp_drv.ver_res);
+  printf("Display size %dx%d\n", disp_drv.hor_res, disp_drv.ver_res);
   disp = lv_disp_drv_register(&disp_drv);
   lv_disp_set_default(disp);
 }
