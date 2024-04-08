@@ -70,10 +70,15 @@ void read_in_configuration(const char *configuration_file_path)
     _read_color(&libconfig_handle, "progress_bar.colors.indicator_border", &configuration.progress_bar.colors.indicator_border);
     if (config_lookup_int(&libconfig_handle, "progress_bar.layout.indicator.border_width", &configuration.progress_bar.layout.indicator.border_width) != CONFIG_TRUE)
         configuration.progress_bar.layout.indicator.border_width = 0;
+    if (config_lookup_int(&libconfig_handle, "progress_bar.layout.indicator.radius", &configuration.progress_bar.layout.indicator.radius) != CONFIG_TRUE)
+        configuration.progress_bar.layout.indicator.radius = 0;
+
     if (config_lookup_int(&libconfig_handle, "progress_bar.layout.background.border_width", &configuration.progress_bar.layout.background.border_width) != CONFIG_TRUE)
         configuration.progress_bar.layout.background.border_width = 0;
     if (config_lookup_int(&libconfig_handle, "progress_bar.layout.background.padding", &configuration.progress_bar.layout.background.padding) != CONFIG_TRUE)
         configuration.progress_bar.layout.background.padding = 0;
+    if (config_lookup_int(&libconfig_handle, "progress_bar.layout.background.radius", &configuration.progress_bar.layout.background.radius) != CONFIG_TRUE)
+        configuration.progress_bar.layout.background.radius = 0;
     config_destroy(&libconfig_handle);
     return;
 _init_defaults_return:
@@ -84,7 +89,9 @@ _init_defaults_return:
     configuration.progress_bar.layout.offset.y = 0;
     configuration.progress_bar.layout.background.border_width = 1;
     configuration.progress_bar.layout.background.padding = 1;
+    configuration.progress_bar.layout.background.radius = 0;
     configuration.progress_bar.layout.indicator.border_width = 0;
+    configuration.progress_bar.layout.indicator.radius = 0;
     configuration.progress_bar.colors.background = lv_color_hex(0xffffffff);
     configuration.progress_bar.colors.background_border = lv_color_hex(0xffffffff);
     configuration.progress_bar.colors.indicator = lv_color_hex(0xffcccccc);

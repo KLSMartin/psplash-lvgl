@@ -121,12 +121,14 @@ static lv_obj_t *interactive_progress_bar_create(lv_obj_t *parent, progress_indi
   lv_style_set_pad_all(&progress_indicator_data.ui.styles.bg, LV_STATE_DEFAULT, configuration.progress_bar.layout.background.padding);
   lv_style_set_border_width(&progress_indicator_data.ui.styles.bg, LV_STATE_DEFAULT, configuration.progress_bar.layout.background.border_width);
   lv_style_set_border_color(&progress_indicator_data.ui.styles.bg, LV_STATE_DEFAULT, configuration.progress_bar.colors.background_border);
+  lv_style_set_radius(&progress_indicator_data.ui.styles.bg, LV_STATE_DEFAULT, configuration.progress_bar.layout.background.radius);
   lv_obj_add_style(bar, LV_BAR_PART_BG, &progress_indicator_data.ui.styles.bg);
   lv_style_init(&progress_indicator_data.ui.styles.indicator);
   lv_style_set_bg_color(&progress_indicator_data.ui.styles.indicator, LV_STATE_DEFAULT, configuration.progress_bar.colors.indicator);
   lv_style_set_bg_opa(&progress_indicator_data.ui.styles.indicator, LV_STATE_DEFAULT, LV_OPA_COVER);
   lv_style_set_border_width(&progress_indicator_data.ui.styles.indicator, LV_STATE_DEFAULT, configuration.progress_bar.layout.indicator.border_width);
   lv_style_set_border_color(&progress_indicator_data.ui.styles.indicator, LV_STATE_DEFAULT, configuration.progress_bar.colors.indicator_border);
+  lv_style_set_radius(&progress_indicator_data.ui.styles.indicator, LV_STATE_DEFAULT, configuration.progress_bar.layout.indicator.radius);
   lv_obj_add_style(bar, LV_BAR_PART_INDIC, &progress_indicator_data.ui.styles.indicator);
 
   lv_obj_set_size(bar, configuration.progress_bar.layout.width, configuration.progress_bar.layout.height);

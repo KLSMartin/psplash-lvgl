@@ -16,9 +16,11 @@ progress_bar = {
         background = {
             padding = 2
             border_width = 2
+            radius = 0
         }
         indicator = {
             border_width = 0
+            radius = 0
         }
     }
 }
