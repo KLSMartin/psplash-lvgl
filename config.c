@@ -64,8 +64,6 @@ void read_in_configuration(const char *configuration_file_path)
         configuration.progress_bar.layout.offset.x = 0;
     if (config_lookup_int(&libconfig_handle, "progress_bar.layout.offset.y", &configuration.progress_bar.layout.offset.y) != CONFIG_TRUE)
         configuration.progress_bar.layout.offset.y = 0;
-    if (config_lookup_int(&libconfig_handle, "progress_bar.layout.offset.y", &configuration.progress_bar.layout.offset.y) != CONFIG_TRUE)
-        configuration.progress_bar.layout.offset.y = 0;
     _read_color(&libconfig_handle, "progress_bar.colors.background", &configuration.progress_bar.colors.background);
     _read_color(&libconfig_handle, "progress_bar.colors.background_border", &configuration.progress_bar.colors.background_border);
     _read_color(&libconfig_handle, "progress_bar.colors.indicator", &configuration.progress_bar.colors.indicator);
