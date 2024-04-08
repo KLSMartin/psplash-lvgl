@@ -40,6 +40,31 @@ static void _read_color(config_t *libconfig_handle, const char *path_prefix, lv_
     *color = lv_color_make(clip_color(r), clip_color(g), clip_color(b));
 }
 
+#ifdef DEBUG
+static void dump_config(void)
+{
+    printf("Color depth: %d\n", LV_COLOR_DEPTH);
+    printf("image_path: %s\n", configuration.background.image_path);
+    printf("progress.layout.width: %d\n", configuration.progress_bar.layout.width);
+    printf("progress.layout.height: %d\n", configuration.progress_bar.layout.height);
+    printf("progress.layout.offset.x: %d\n", configuration.progress_bar.layout.offset.x);
+    printf("progress.layout.offset.y: %d\n", configuration.progress_bar.layout.offset.y);
+    printf("progress.layout.background.padding: %d\n", configuration.progress_bar.layout.background.padding);
+    printf("progress.layout.background.border_width: %d\n", configuration.progress_bar.layout.background.border_width);
+    printf("progress.layout.background.radius: %d\n", configuration.progress_bar.layout.background.radius);
+    printf("progress.layout.indicator.border_width: %d\n", configuration.progress_bar.layout.indicator.border_width);
+    printf("progress.layout.indicator.radius: %d\n", configuration.progress_bar.layout.indicator.radius);
+    #define _COLOR(_memb) configuration.progress_bar.colors. _memb . ch.red, configuration.progress_bar.colors. _memb . ch.green, configuration.progress_bar.colors. _memb . ch.blue
+    printf("progress.layout.colors.background: %d %d %d\n", _COLOR(background));
+    printf("progress.layout.colors.background_border: %d %d %d\n", _COLOR(background_border));
+    printf("progress.layout.colors.indicator: %d %d %d\n", _COLOR(indicator));
+    printf("progress.layout.colors.indicator_border: %d %d %d\n", _COLOR(indicator_border));
+    #undef _COLOR
+}
+#else
+#define dump_config() do {} while (0)
+#endif
+
 void read_in_configuration(const char *configuration_file_path)
 {
     config_t libconfig_handle;
@@ -80,6 +105,7 @@ void read_in_configuration(const char *configuration_file_path)
     if (config_lookup_int(&libconfig_handle, "progress_bar.layout.background.radius", &configuration.progress_bar.layout.background.radius) != CONFIG_TRUE)
         configuration.progress_bar.layout.background.radius = 0;
     config_destroy(&libconfig_handle);
+    dump_config();
     return;
 _init_defaults_return:
     fprintf(stderr, "Error reading configuration values from %s. Falling back do defaults.\n", configuration_file_path);
