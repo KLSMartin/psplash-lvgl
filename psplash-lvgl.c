@@ -13,6 +13,7 @@
  */
 
 /* === Includes ============================================================= */
+#define _GNU_SOURCE /* need 'pthread_tryjoin_np' from pthread */
 /* standard includes */
 #include <stdlib.h>
 #include <stdio.h>
@@ -138,20 +139,6 @@ static lv_obj_t *interactive_progress_bar_create(lv_obj_t *parent, progress_indi
   lv_bar_set_start_value(bar, 0, LV_ANIM_OFF);
   return bar;
 }
-
-static void *ui_update_thread_cb(void *data)
-{
-  (void)data;
-
-  while (1) {
-    lv_tick_inc(1);
-    lv_task_handler();
-    update_ui();
-    usleep(1000);
-  }
-  return NULL;
-}
-
 
 
 /***************************************************************************/ /**
@@ -356,6 +343,15 @@ void psplash_main(int pipe_fd)
   return;
 }
 
+
+static void *command_thread_cb(void *data)
+{
+  int *pipe_fd = data;
+
+  psplash_main(*pipe_fd);
+  return NULL;
+}
+
 /**
  * @brief Notify systemd deamon, in case service is started with type=notify
  */
@@ -437,7 +433,7 @@ int main(int argc, char **argv)
 {
   char *rundir;
   int pipe_fd, ret = 0;
-  pthread_t ui_update_thread;
+  pthread_t command_thread;
 
   if (argc == 1)
     read_in_configuration("config.ini");
@@ -479,12 +475,16 @@ int main(int argc, char **argv)
   init_lvgl();
   ui_create();
 
-  /* call task handler once to show ui, to prevent race of update thread against psplash_main exiting directly */
+  /* call task handler once to show ui, to prevent race of psplash thread against ui loop exiting directly */
   lv_task_handler();
 
-  pthread_create(&ui_update_thread, NULL, ui_update_thread_cb, NULL);
+  pthread_create(&command_thread, NULL, command_thread_cb, (void*)&pipe_fd);
 
-  psplash_main(pipe_fd);
+  while (usleep(1000) == 0 && pthread_tryjoin_np(command_thread, NULL) == EBUSY) {
+    lv_tick_inc(1);
+    lv_task_handler();
+    update_ui();
+  }
 
 unlink_fifo_exit:
   unlink(PSPLASH_FIFO);
