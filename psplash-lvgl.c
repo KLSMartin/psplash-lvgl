@@ -470,7 +470,7 @@ int main(int argc, char **argv)
     if (errno != EEXIST)
     {
       perror("mkfifo");
-      exit(-1);
+      exit(1);
     }
   }
 
@@ -479,7 +479,7 @@ int main(int argc, char **argv)
   if (pipe_fd == -1)
   {
     perror("pipe open");
-    exit(-2);
+    exit(1);
   }
 
   if (0)
