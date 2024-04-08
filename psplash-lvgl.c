@@ -183,8 +183,12 @@ static void init_lvgl()
   fbdev_get_sizes(&display_size.width, &display_size.height);
 #endif
   printf("Initialized backend: %s\n", buf);
-  // Ignore failing allocation on purpose. Let the application eventually crash (SEGV).
+
   buf_1 = malloc(display_size.width * display_size.height * sizeof(*buf_1));
+  if (!buf_1) {
+    fprintf(stderr, "%s\n", strerror(ENOMEM));
+    exit(1);
+  }
 
   /*Initialize `disp_buf` with the buffer(s) */
   lv_disp_buf_init(&disp_buf, buf_1, NULL, display_size.width * display_size.height);
