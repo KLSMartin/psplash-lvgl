@@ -15,7 +15,6 @@ typedef struct {
             } background;
             struct {
                 int border_width;
-                int padding;
             } indicator;
             int width, height;
         } layout;
