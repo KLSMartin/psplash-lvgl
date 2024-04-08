@@ -479,12 +479,6 @@ int main(int argc, char **argv)
   if (pipe_fd == -1)
   {
     perror("pipe open");
-    exit(1);
-  }
-
-  if (0)
-  {
-    ret = -1;
     goto unlink_fifo_exit;
   }
 
