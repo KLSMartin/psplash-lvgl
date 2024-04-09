@@ -31,16 +31,30 @@ DefaultDependencies=no
 # psplash creates its FIFO in the directory specified
 # by environment variable `PSPLASH_FIFO_DIR`, `/run/` by default.
 RequiresMountsFor=/run
+Wants=psplash-systemd.service
+Before=psplash-systemd.service
 
 [Service]
 Type=notify
 # the configuration file (config.ini) is read from CWD.
 WorkingDirectory=/usr/share/psplash-lvgl
 ExecStart=/usr/bin/psplash-lvgl
-ExecStartPost=/usr/bin/psplash-systemd
 
 [Install]
 WantedBy=sysinit.target
+```
+
+In combination with `psplash-systemd.service`
+
+```ini
+[Unit]
+Description=Send Boot Screen Updates
+DefaultDependencies=no
+RequiresMountsFor=/run
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/psplash-systemd
 ```
 
 # Incompatibility
