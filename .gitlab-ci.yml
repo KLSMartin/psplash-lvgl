@@ -8,7 +8,7 @@ release:
   stage: build
   variables:
     BUILDTYPE: 'release'
-    MESON_FLAGS: '-Dstrip=true -Dlvgl:color_depth=16'
+    MESON_FLAGS: '-Dstrip=true -Dlvgl:color_depth=16 --prefix=/usr'
   script:
     - meson --buildtype=${BUILDTYPE} ${MESON_FLAGS} build
     - env DESTDIR=sysroot ninja -C build install
@@ -19,4 +19,4 @@ release:
 release-fb:
   extends: release
   variables:
-    MESON_FLAGS: '-Dstrip=true -Dlvgl:color_depth=16 -Dlv_drivers:display_backend=fb'
+    MESON_FLAGS: '-Dstrip=true -Dlvgl:color_depth=16 --prefix=/usr -Dlv_drivers:display_backend=fb'
