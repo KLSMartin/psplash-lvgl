@@ -60,9 +60,12 @@ meson setup build && ninja -C build
 ```
 
 For testing, customize the FIFO and `config.ini` locations:
-```
-# fifo and config.ini in run subdir
-PSPLASH_FIFO_DIR=$(pwd)/run/psplash_fifo ./build/psplash-lvgl ./run/config.ini &
+```sh
+# prepare run dir
+mkdir run
+
+# fifo in run subdir
+PSPLASH_FIFO_DIR=$(pwd)/run/psplash_fifo ./build/psplash-lvgl ./data/config.ini &
 
 # send messages to fifo
 echo -e 'PROGRESS 20\0' > run/psplash_fifo

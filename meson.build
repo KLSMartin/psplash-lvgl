@@ -60,11 +60,9 @@ executable(
     install: true
 )
 configure_file(
-    input : 'data/config.ini.in',
+    input : 'data/config.ini',
     output : 'config.ini',
-    configuration : {
-        'appdatadir' : get_option('prefix') / get_option('datadir') / meson.project_name(),
-    },
+    copy: true,
     install: true,
     install_dir: get_option('datadir') / meson.project_name(),
     install_mode: 'r--r--r--',
