@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <libgen.h>
 #include <libconfig.h>
 #include "config.h"
 
@@ -89,7 +91,24 @@ void read_in_configuration(const char *configuration_file_path)
     if (config_read_file(&libconfig_handle, configuration_file_path) != CONFIG_TRUE)
         goto _init_err;
     if (config_lookup_string(&libconfig_handle, "background.image_path", &background_image_tmp) == CONFIG_TRUE) {
-        strncpy(configuration.background.image_path, background_image_tmp, path_size_minus_one);
+        if (background_image_tmp[0] == '/') {
+            strncpy(configuration.background.image_path, background_image_tmp, path_size_minus_one);
+        /* relative paths are relative to config file */
+        } else if (background_image_tmp[0] != '\0') {
+            char *configuration_file_path_copy, *configuration_file_dir;
+
+            configuration_file_path_copy = strdup(configuration_file_path);
+
+            if (configuration_file_path_copy) {
+                configuration_file_dir = realpath(dirname(configuration_file_path_copy), NULL);
+
+                if (configuration_file_dir && strlen(configuration_file_dir) + strlen(background_image_tmp) + 1 < path_size_minus_one) {
+                    snprintf(configuration.background.image_path, path_size_minus_one, "%s/%s", configuration_file_dir, background_image_tmp);
+                }
+                free(configuration_file_path_copy);
+                free(configuration_file_dir);
+            }
+        }
         configuration.background.image_path[path_size_minus_one] = '\0';
     }
 
