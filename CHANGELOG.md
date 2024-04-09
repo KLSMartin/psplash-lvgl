@@ -5,6 +5,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+ - feature: config.ini: add option to set progress bar border radius (backwards compatible, default is no radius/rounding)
+ - CI: add build for 2.3.X OS release (glibc 2.30) (framebuffer display backend)
+ - configuration: dump resulting configuration for `DEBUG` builds.
+
+### Changed
+ - CI: build: `libconfig`: always build from wrap and link it statically.
+ - CI: build: install into `/usr` prefix.
+ - meson: build: make 16bit color depth the default.
+ - lvgl: lv_conf: remove unused configurations options.
+ - configuration: code cleanup: remove duplicate config value reading, unused config struct members
+
+### Fixed
+ - simulator: fix build/run for simulator with sdl2 display_backend
+ - lvgl: lv_conf: 32 bit color depth: fix build with 32bit color depth selected (leading to crashes on startup otherwise).
+ - main: switch command and ui update thread (now in main thread). Required for the sdl2 display backend.
+ - main: improve/fix fifo cleanup (mostly).
+ - configuration: fix initialization with partial progress bar colors, remove duplicate default values.
+ - main: do not return negative values from main.
 
 
 ## [1.2.0] - 2023-08-30
