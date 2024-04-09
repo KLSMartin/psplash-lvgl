@@ -8,15 +8,17 @@ release:
   stage: build
   variables:
     BUILDTYPE: 'release'
-    MESON_FLAGS: '-Dstrip=true -Dlvgl:color_depth=16 --prefix=/usr'
+    MESON_FLAGS: '-Dstrip=true -Dlvgl:color_depth=16 --prefix=/usr --force-fallback-for=libconfig'
   script:
     - meson --buildtype=${BUILDTYPE} ${MESON_FLAGS} build
-    - env DESTDIR=sysroot ninja -C build install
+    - env DESTDIR=$(pwd)/sysroot ninja -C build install
+    # remove static libconfig from installation, not needed
+    - rm -rf sysroot/usr/lib sysroot/usr/include sysroot/usr/share/info
   artifacts:
     paths:
-      - build/sysroot/
+      - sysroot/
 
 release-fb:
   extends: release
   variables:
-    MESON_FLAGS: '-Dstrip=true -Dlvgl:color_depth=16 --prefix=/usr -Dlv_drivers:display_backend=fb'
+    MESON_FLAGS: '-Dstrip=true -Dlvgl:color_depth=16 --prefix=/usr --force-fallback-for=libconfig -Dlv_drivers:display_backend=fb'
