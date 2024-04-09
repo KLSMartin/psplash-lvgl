@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
  - feature: config.ini: add option to set progress bar border radius (backwards compatible, default is no radius/rounding)
+ - feature: config.ini: accept relative path for image (relative to config.ini file)
  - CI: add build for 2.3.X OS release (glibc 2.30) (framebuffer display backend)
  - configuration: dump resulting configuration for `DEBUG` builds.
 
