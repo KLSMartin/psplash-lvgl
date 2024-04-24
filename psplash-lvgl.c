@@ -13,6 +13,7 @@
  */
 
 /* === Includes ============================================================= */
+#define _GNU_SOURCE /* need 'pthread_tryjoin_np' from pthread */
 /* standard includes */
 #include <stdlib.h>
 #include <stdio.h>
@@ -121,12 +122,14 @@ static lv_obj_t *interactive_progress_bar_create(lv_obj_t *parent, progress_indi
   lv_style_set_pad_all(&progress_indicator_data.ui.styles.bg, LV_STATE_DEFAULT, configuration.progress_bar.layout.background.padding);
   lv_style_set_border_width(&progress_indicator_data.ui.styles.bg, LV_STATE_DEFAULT, configuration.progress_bar.layout.background.border_width);
   lv_style_set_border_color(&progress_indicator_data.ui.styles.bg, LV_STATE_DEFAULT, configuration.progress_bar.colors.background_border);
+  lv_style_set_radius(&progress_indicator_data.ui.styles.bg, LV_STATE_DEFAULT, configuration.progress_bar.layout.background.radius);
   lv_obj_add_style(bar, LV_BAR_PART_BG, &progress_indicator_data.ui.styles.bg);
   lv_style_init(&progress_indicator_data.ui.styles.indicator);
   lv_style_set_bg_color(&progress_indicator_data.ui.styles.indicator, LV_STATE_DEFAULT, configuration.progress_bar.colors.indicator);
   lv_style_set_bg_opa(&progress_indicator_data.ui.styles.indicator, LV_STATE_DEFAULT, LV_OPA_COVER);
   lv_style_set_border_width(&progress_indicator_data.ui.styles.indicator, LV_STATE_DEFAULT, configuration.progress_bar.layout.indicator.border_width);
   lv_style_set_border_color(&progress_indicator_data.ui.styles.indicator, LV_STATE_DEFAULT, configuration.progress_bar.colors.indicator_border);
+  lv_style_set_radius(&progress_indicator_data.ui.styles.indicator, LV_STATE_DEFAULT, configuration.progress_bar.layout.indicator.radius);
   lv_obj_add_style(bar, LV_BAR_PART_INDIC, &progress_indicator_data.ui.styles.indicator);
 
   lv_obj_set_size(bar, configuration.progress_bar.layout.width, configuration.progress_bar.layout.height);
@@ -136,20 +139,6 @@ static lv_obj_t *interactive_progress_bar_create(lv_obj_t *parent, progress_indi
   lv_bar_set_start_value(bar, 0, LV_ANIM_OFF);
   return bar;
 }
-
-static void *ui_update_thread_cb(void *data)
-{
-  (void)data;
-
-  while (1) {
-    lv_tick_inc(1);
-    lv_task_handler();
-    update_ui();
-    usleep(1000);
-  }
-  return NULL;
-}
-
 
 
 /***************************************************************************/ /**
@@ -183,8 +172,12 @@ static void init_lvgl()
   fbdev_get_sizes(&display_size.width, &display_size.height);
 #endif
   printf("Initialized backend: %s\n", buf);
-  // Ignore failing allocation on purpose. Let the application eventually crash (SEGV).
+
   buf_1 = malloc(display_size.width * display_size.height * sizeof(*buf_1));
+  if (!buf_1) {
+    fprintf(stderr, "%s\n", strerror(ENOMEM));
+    exit(1);
+  }
 
   /*Initialize `disp_buf` with the buffer(s) */
   lv_disp_buf_init(&disp_buf, buf_1, NULL, display_size.width * display_size.height);
@@ -205,7 +198,7 @@ static void init_lvgl()
   /* propaget the runtime determined screen size */
   disp_drv.hor_res = display_size.width;
   disp_drv.ver_res = display_size.height;
-  printf("Assuming a display size of %dx%d\n", disp_drv.hor_res, disp_drv.ver_res);
+  printf("Display size %dx%d\n", disp_drv.hor_res, disp_drv.ver_res);
   disp = lv_disp_drv_register(&disp_drv);
   lv_disp_set_default(disp);
 }
@@ -252,7 +245,13 @@ parse_command(char *string)
     char *arg = strtok(NULL, "\0");
     if (arg)
     {
-      psplash_draw_progress(atoi(arg));
+      char *endptr = NULL;
+      long int val;
+      errno = 0;    /* To distinguish success/failure after call */
+      val = strtol(arg, &endptr, 10);
+      if ((errno == 0) && endptr && (*endptr == '\0') && (val >= 0) && (val <= 100)) {
+        psplash_draw_progress(val);
+      }
     }
   }
   else if (!strcmp(command, "MSG"))
@@ -270,18 +269,14 @@ parse_command(char *string)
   return 0;
 }
 
-void psplash_main(int pipe_fd, int timeout)
+void psplash_main(int pipe_fd)
 {
   int err;
   ssize_t length = 0;
   fd_set descriptors;
-  struct timeval tv;
   char *end;
   char *cmd;
   char command[2048];
-
-  tv.tv_sec = timeout;
-  tv.tv_usec = 0;
 
   FD_ZERO(&descriptors);
   FD_SET(pipe_fd, &descriptors);
@@ -290,10 +285,7 @@ void psplash_main(int pipe_fd, int timeout)
 
   while (1)
   {
-    if (timeout != 0)
-      err = select(pipe_fd + 1, &descriptors, NULL, NULL, &tv);
-    else
-      err = select(pipe_fd + 1, &descriptors, NULL, NULL, NULL);
+    err = select(pipe_fd + 1, &descriptors, NULL, NULL, NULL);
 
     if (err <= 0)
     {
@@ -344,14 +336,20 @@ void psplash_main(int pipe_fd, int timeout)
   out:
     end = &command[length];
 
-    tv.tv_sec = timeout;
-    tv.tv_usec = 0;
-
     FD_ZERO(&descriptors);
     FD_SET(pipe_fd, &descriptors);
   }
 
   return;
+}
+
+
+static void *command_thread_cb(void *data)
+{
+  int *pipe_fd = data;
+
+  psplash_main(*pipe_fd);
+  return NULL;
 }
 
 /**
@@ -435,7 +433,7 @@ int main(int argc, char **argv)
 {
   char *rundir;
   int pipe_fd, ret = 0;
-  pthread_t ui_update_thread;
+  pthread_t command_thread;
 
   if (argc == 1)
     read_in_configuration("config.ini");
@@ -460,7 +458,7 @@ int main(int argc, char **argv)
     if (errno != EEXIST)
     {
       perror("mkfifo");
-      exit(-1);
+      exit(1);
     }
   }
 
@@ -469,12 +467,6 @@ int main(int argc, char **argv)
   if (pipe_fd == -1)
   {
     perror("pipe open");
-    exit(-2);
-  }
-
-  if (0)
-  {
-    ret = -1;
     goto unlink_fifo_exit;
   }
 
@@ -483,12 +475,16 @@ int main(int argc, char **argv)
   init_lvgl();
   ui_create();
 
-  /* call task handler once to show ui, to prevent race of update thread against psplash_main exiting directly */
+  /* call task handler once to show ui, to prevent race of psplash thread against ui loop exiting directly */
   lv_task_handler();
 
-  pthread_create(&ui_update_thread, NULL, ui_update_thread_cb, NULL);
+  pthread_create(&command_thread, NULL, command_thread_cb, (void*)&pipe_fd);
 
-  psplash_main(pipe_fd, 0);
+  while (usleep(5000) == 0 && pthread_tryjoin_np(command_thread, NULL) == EBUSY) {
+    lv_tick_inc(5);
+    lv_task_handler();
+    update_ui();
+  }
 
 unlink_fifo_exit:
   unlink(PSPLASH_FIFO);

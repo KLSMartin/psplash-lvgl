@@ -12,10 +12,11 @@ typedef struct {
             struct {
                 int border_width;
                 int padding;
+                int radius;
             } background;
             struct {
                 int border_width;
-                int padding;
+                int radius;
             } indicator;
             int width, height;
         } layout;

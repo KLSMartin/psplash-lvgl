@@ -1,6 +1,6 @@
 project('psplash-lvgl',
     'c',
-    version: '1.2.0',
+    version: '1.3.0',
     meson_version: '>=0.55.0', # required to allow patches for wrap-git mode.
     default_options: [
         'warning_level=3',
@@ -60,11 +60,9 @@ executable(
     install: true
 )
 configure_file(
-    input : 'data/config.ini.in',
+    input : 'data/config.ini',
     output : 'config.ini',
-    configuration : {
-        'appdatadir' : get_option('prefix') / get_option('datadir') / meson.project_name(),
-    },
+    copy: true,
     install: true,
     install_dir: get_option('datadir') / meson.project_name(),
     install_mode: 'r--r--r--',

@@ -8,15 +8,33 @@ release:
   stage: build
   variables:
     BUILDTYPE: 'release'
-    MESON_FLAGS: '-Dstrip=true -Dlvgl:color_depth=16'
+    MESON_FLAGS: '-Dstrip=true -Dlvgl:color_depth=16 --prefix=/usr --force-fallback-for=libconfig'
   script:
     - meson --buildtype=${BUILDTYPE} ${MESON_FLAGS} build
-    - env DESTDIR=sysroot ninja -C build install
+    - env DESTDIR=$(pwd)/sysroot ninja -C build install
+    # remove static libconfig from installation, not needed
+    - rm -rf sysroot/usr/lib sysroot/usr/include sysroot/usr/share/info
   artifacts:
     paths:
-      - build/sysroot/
+      - sysroot/
 
 release-fb:
   extends: release
   variables:
-    MESON_FLAGS: '-Dstrip=true -Dlvgl:color_depth=16 -Dlv_drivers:display_backend=fb'
+    MESON_FLAGS: '-Dstrip=true -Dlvgl:color_depth=16 --prefix=/usr --force-fallback-for=libconfig -Dlv_drivers:display_backend=fb'
+
+# build it for OS releases 2.3.x
+release-fb-2.3.x:
+  extends: release
+  image: registry.klsmartin-development.de:443/platform/meta-kls/toolchain:2.3.1
+  variables:
+    MESON_FLAGS: '-Dstrip=true -Dlvgl:color_depth=16 --prefix=/usr --force-fallback-for=libconfig -Dlv_drivers:display_backend=fb'
+    MESON_CROSS_FILE: /opt/kls-kls/2.3.1/sysroots/x86_64-klssdk-linux/usr/share/meson/arm-kls-linux-gnueabi-meson.cross
+  script:
+    - source /opt/kls-kls/2.3.1/environment-setup-cortexa9t2hf-neon-kls-linux-gnueabi
+    # Need newer meson than SDK provides for wraps and for libconfig configuration, use system python3
+    - /usr/bin/python3 -m pip install meson==0.58.1
+    - /usr/local/bin/meson setup --cross-file=$MESON_CROSS_FILE --buildtype=${BUILDTYPE} ${MESON_FLAGS} build
+    - env DESTDIR=$(pwd)/sysroot ninja -C build install
+    # remove static libconfig from installation, not needed
+    - rm -rf sysroot/usr/lib sysroot/usr/include sysroot/usr/share/info

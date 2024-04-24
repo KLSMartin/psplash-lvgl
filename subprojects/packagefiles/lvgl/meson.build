@@ -121,14 +121,12 @@ add_project_arguments(
     language: 'c'
 )
 
-# Color depth:
-# - 1:  1 byte per pixel
-# - 8:  RGB332
-# - 16: RGB565
-# - 32: ARGB8888
-add_project_arguments(
-    '-DLV_COLOR_DEPTH=' + get_option('color_depth').to_string(),
-    language: 'c'
+lvgl_conf_data = configuration_data()
+lvgl_conf_data.set('LV_COLOR_DEPTH', get_option('color_depth').to_string())
+lvgl_conf_file = configure_file(
+    input: 'lv_conf.h.in',
+    output: 'lv_conf.h',
+    configuration: lvgl_conf_data,
 )
 
 # never treat as error
@@ -137,8 +135,7 @@ add_project_arguments(
     language: 'c'
 )
 
-
-lvgl = library('lvgl', sources)
+lvgl = library('lvgl', sources, include_directories: include_directories('.'))
 
 if meson.is_subproject()
     lvgl_dep = declare_dependency(include_directories: include_directories('.'), link_with: lvgl)
