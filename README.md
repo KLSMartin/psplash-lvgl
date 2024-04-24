@@ -92,7 +92,7 @@ For testing, customize the FIFO and `config.ini` locations:
 mkdir run
 
 # fifo in run subdir
-PSPLASH_FIFO_DIR=$(pwd)/run/psplash_fifo ./build/psplash-lvgl ./data/config.ini &
+PSPLASH_FIFO_DIR=$(pwd)/run ./build/psplash-lvgl ./data/config.ini &
 
 # send messages to fifo
 echo -e 'PROGRESS 20\0' > run/psplash_fifo
