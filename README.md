@@ -31,16 +31,30 @@ DefaultDependencies=no
 # psplash creates its FIFO in the directory specified
 # by environment variable `PSPLASH_FIFO_DIR`, `/run/` by default.
 RequiresMountsFor=/run
+Wants=psplash-systemd.service
+Before=psplash-systemd.service
 
 [Service]
 Type=notify
 # the configuration file (config.ini) is read from CWD.
 WorkingDirectory=/usr/share/psplash-lvgl
 ExecStart=/usr/bin/psplash-lvgl
-ExecStartPost=/usr/bin/psplash-systemd
 
 [Install]
 WantedBy=sysinit.target
+```
+
+In combination with `psplash-systemd.service`
+
+```ini
+[Unit]
+Description=Send Boot Screen Updates
+DefaultDependencies=no
+RequiresMountsFor=/run
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/psplash-systemd
 ```
 
 # Incompatibility
@@ -48,3 +62,27 @@ This bootsplash (currently) ignores:
  - screen rotation
  - screen clearance
  - `MSG` commands
+
+
+# Simulator builds
+
+It is possible to build the program for desktop. It requires the `SDL2` library.
+
+To build:
+```bash
+meson setup build && ninja -C build
+```
+
+For testing, customize the FIFO and `config.ini` locations:
+```sh
+# prepare run dir
+mkdir run
+
+# fifo in run subdir
+PSPLASH_FIFO_DIR=$(pwd)/run/psplash_fifo ./build/psplash-lvgl ./data/config.ini &
+
+# send messages to fifo
+echo -e 'PROGRESS 20\0' > run/psplash_fifo
+
+echo -e 'QUIT\0' > run/psplash_fifo
+```

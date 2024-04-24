@@ -19,6 +19,9 @@
    Graphical settings
  *====================*/
 
+/*Color depth: 1 (1 byte per pixel), 8 (RGB332), 16 (RGB565), 32 (ARGB8888)*/
+#define LV_COLOR_DEPTH  @LV_COLOR_DEPTH@
+
 /* Maximal horizontal and vertical resolution to support by the library.*/
 #define LV_HOR_RES_MAX          (800)
 #define LV_VER_RES_MAX          (480)
@@ -142,7 +145,7 @@ typedef void * lv_anim_user_data_t;
 #endif
 
 /* 1: Enable shadow drawing on rectangles*/
-#define LV_USE_SHADOW           1
+#define LV_USE_SHADOW           0
 #if LV_USE_SHADOW
 /* Allow buffering some shadow calculation
  * LV_SHADOW_CACHE_SIZE is the max. shadow size to buffer,
@@ -155,13 +158,13 @@ typedef void * lv_anim_user_data_t;
 #define LV_USE_OUTLINE  1
 
 /*1: enable pattern drawing on rectangles*/
-#define LV_USE_PATTERN  1
+#define LV_USE_PATTERN  0
 
 /*1: enable value string drawing on rectangles*/
 #define LV_USE_VALUE_STR    0
 
 /* 1: Use other blend modes than normal (`LV_BLEND_MODE_...`)*/
-#define LV_USE_BLEND_MODES      1
+#define LV_USE_BLEND_MODES      0
 
 /* 1: Use the `opa_scale` style property to set the opacity of an object and its children at once*/
 #define LV_USE_OPA_SCALE        1
@@ -209,8 +212,8 @@ typedef void * lv_fs_drv_user_data_t;
 #define LV_USE_PERF_MONITOR     0
 
 /*1: Use the functions and types from the older API if possible */
-#define LV_USE_API_EXTENSION_V6  1
-#define LV_USE_API_EXTENSION_V7  1
+#define LV_USE_API_EXTENSION_V6  0
+#define LV_USE_API_EXTENSION_V7  0
 
 /*========================
  * Image decoder and cache

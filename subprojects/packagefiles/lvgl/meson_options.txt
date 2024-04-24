@@ -1,1 +1,1 @@
-option('color_depth', type: 'integer', min: 1, max: 32, value: 32)
+option('color_depth', type: 'integer', min: 1, max: 32, value: 16)
