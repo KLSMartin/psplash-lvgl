@@ -64,6 +64,19 @@ This bootsplash (currently) ignores:
  - `MSG` commands
 
 
+# Graphic Backends
+
+The application can use either the `drm` (default on cross builds, `/dev/dri/card0`) or `fb` (`/dev/fb0`) graphics backend.
+To use the framebuffer add `-Dlv_drivers:display_backend=fb` when configuring.
+
+# Building
+
+The project uses `meson` to configure.
+```sh
+meson setup --cross-file=/path/to/cross-file.meson --buildtype=release --strip -Dlv_drivers:display_backend=drm build
+env DESTDIR=$(pwd)/build/sysroot ninja -C build install
+```
+
 # Simulator builds
 
 It is possible to build the program for desktop. It requires the `SDL2` library.
