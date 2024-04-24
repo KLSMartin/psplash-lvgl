@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+
+## [1.3.0] - 2024-04-25
 ### Added
  - feature: config.ini: add option to set progress bar border radius (backwards compatible, default is no radius/rounding)
  - feature: config.ini: accept relative path for image (relative to config.ini file)
