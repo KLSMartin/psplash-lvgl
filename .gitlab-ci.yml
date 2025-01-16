@@ -1,3 +1,6 @@
+variables:
+  LVGL_MIRROR_PATH: "software/soup/lvgl"
+
 stages:
   - build
 
@@ -9,6 +12,9 @@ release:
   variables:
     BUILDTYPE: 'release'
     MESON_FLAGS: '-Dstrip=true -Dlvgl:color_depth=16 --prefix=/usr --force-fallback-for=libconfig'
+  before_script:
+    # point to internal mirror
+    - git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_FQDN}/${LVGL_MIRROR_PATH}".insteadOf "https://github.com/lvgl"
   script:
     - meson --buildtype=${BUILDTYPE} ${MESON_FLAGS} build
     - env DESTDIR=$(pwd)/sysroot ninja -C build install
