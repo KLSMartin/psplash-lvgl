@@ -1,10 +1,11 @@
 variables:
   LVGL_MIRROR_PATH: "software/soup/lvgl"
+  REGISTRY_TOOLCHAIN_IMAGE: $KLS_CI_REGISTRY/platform/meta-kls/toolchain
 
 stages:
   - build
 
-image: $CI_REGISTRY/platform/meta-kls/toolchain:2.4.7
+image: $REGISTRY_TOOLCHAIN_IMAGE:2.4.7
 
 release:
   tags: [ docker ]
@@ -32,7 +33,7 @@ release-fb:
 # build it for OS releases 2.3.x
 release-fb-2.3.x:
   extends: release
-  image: $CI_REGISTRY/platform/meta-kls/toolchain:2.3.1
+  image: $REGISTRY_TOOLCHAIN_IMAGE:2.3.1
   variables:
     MESON_FLAGS: '-Dstrip=true -Dlvgl:color_depth=16 --prefix=/usr --force-fallback-for=libconfig -Dlv_drivers:display_backend=fb'
     MESON_CROSS_FILE: /opt/kls-kls/2.3.1/sysroots/x86_64-klssdk-linux/usr/share/meson/arm-kls-linux-gnueabi-meson.cross
