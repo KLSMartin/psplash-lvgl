@@ -1,7 +1,11 @@
+variables:
+  LVGL_MIRROR_PATH: "software/soup/lvgl"
+  REGISTRY_TOOLCHAIN_IMAGE: $KLS_CI_REGISTRY/platform/meta-kls/toolchain
+
 stages:
   - build
 
-image: registry.klsmartin-development.de:443/platform/meta-kls/toolchain:2.4.7
+image: $REGISTRY_TOOLCHAIN_IMAGE:2.4.7
 
 release:
   tags: [ docker ]
@@ -9,6 +13,9 @@ release:
   variables:
     BUILDTYPE: 'release'
     MESON_FLAGS: '-Dstrip=true -Dlvgl:color_depth=16 --prefix=/usr --force-fallback-for=libconfig'
+  before_script:
+    # point to internal mirror
+    - git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_FQDN}/${LVGL_MIRROR_PATH}".insteadOf "https://github.com/lvgl"
   script:
     - meson --buildtype=${BUILDTYPE} ${MESON_FLAGS} build
     - env DESTDIR=$(pwd)/sysroot ninja -C build install
@@ -26,7 +33,7 @@ release-fb:
 # build it for OS releases 2.3.x
 release-fb-2.3.x:
   extends: release
-  image: registry.klsmartin-development.de:443/platform/meta-kls/toolchain:2.3.1
+  image: $REGISTRY_TOOLCHAIN_IMAGE:2.3.1
   variables:
     MESON_FLAGS: '-Dstrip=true -Dlvgl:color_depth=16 --prefix=/usr --force-fallback-for=libconfig -Dlv_drivers:display_backend=fb'
     MESON_CROSS_FILE: /opt/kls-kls/2.3.1/sysroots/x86_64-klssdk-linux/usr/share/meson/arm-kls-linux-gnueabi-meson.cross

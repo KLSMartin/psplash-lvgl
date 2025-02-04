@@ -1,14 +1,14 @@
 /*
+ *  SPDX-License-Identifier: GPL-2.0-or-later
+ *
  *  psplash-lvgl
  *
- *  Copyright (c) 2021 Leif Middelschulte <leif.middelschulte@klsmartin.com>
+ *  Copyright (c) 2021-2024 KLS Martin SE & Co. KG
  *
  *  Parts of this file ( fifo handling ) based on 'usplash' copyright
  *  Matthew Garret.
  *  Other parts are based on psplash-fb.c by Matthew Allum
  *  Copyright (c) 2006 Matthew Allum <mallum@o-hand.com>
- *
- *  SPDX-License-Identifier: GPL-2.0-or-later
  *
  */
 

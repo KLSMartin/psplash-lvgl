@@ -1,3 +1,6 @@
+/*
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ */
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -67,10 +70,10 @@ void read_in_configuration(const char *configuration_file_path)
 {
     config_t libconfig_handle;
     const char *background_image_tmp;
-    const size_t path_size_minus_one = sizeof(configuration.background.image_path) - 1;
+    const size_t max_image_path = sizeof(configuration.background.image_path) - 1;
 
     configuration.background.image_path[0] = '\0';
-    strncpy(configuration.background.image_path, "/usr/share/logo.png", path_size_minus_one);
+    strncpy(configuration.background.image_path, "/usr/share/logo.png", max_image_path);
     configuration.progress_bar.layout.width = 300;
     configuration.progress_bar.layout.height = 20;
     configuration.progress_bar.layout.offset.x = 0;
@@ -92,7 +95,12 @@ void read_in_configuration(const char *configuration_file_path)
         goto _init_err;
     if (config_lookup_string(&libconfig_handle, "background.image_path", &background_image_tmp) == CONFIG_TRUE) {
         if (background_image_tmp[0] == '/') {
-            strncpy(configuration.background.image_path, background_image_tmp, path_size_minus_one);
+            int pathlen = snprintf(configuration.background.image_path, max_image_path, "%s", background_image_tmp);
+            if (pathlen < 0 || (size_t)pathlen >= max_image_path) {
+                fprintf(stderr, "%s too long, using default\n", "background.image_path");
+                strncpy(configuration.background.image_path, "/usr/share/logo.png", max_image_path);
+            }
+
         /* relative paths are relative to config file */
         } else if (background_image_tmp[0] != '\0') {
             char *configuration_file_path_copy, *configuration_file_dir;
@@ -102,14 +110,18 @@ void read_in_configuration(const char *configuration_file_path)
             if (configuration_file_path_copy) {
                 configuration_file_dir = realpath(dirname(configuration_file_path_copy), NULL);
 
-                if (configuration_file_dir && strlen(configuration_file_dir) + strlen(background_image_tmp) + 1 < path_size_minus_one) {
-                    snprintf(configuration.background.image_path, path_size_minus_one, "%s/%s", configuration_file_dir, background_image_tmp);
+                if (configuration_file_dir) {
+                    int pathlen = snprintf(configuration.background.image_path, max_image_path, "%s/%s", configuration_file_dir, background_image_tmp);
+                    if (pathlen < 0 || (size_t)pathlen >= max_image_path) {
+                        fprintf(stderr, "%s too long, using default\n", "background.image_path");
+                        strncpy(configuration.background.image_path, "/usr/share/logo.png", max_image_path);
+                    }
                 }
                 free(configuration_file_path_copy);
                 free(configuration_file_dir);
             }
         }
-        configuration.background.image_path[path_size_minus_one] = '\0';
+        configuration.background.image_path[max_image_path] = '\0';
     }
 
     config_lookup_int(&libconfig_handle, "progress_bar.layout.width", &configuration.progress_bar.layout.width);
