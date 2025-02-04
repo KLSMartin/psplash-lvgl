@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- configuration: fix potential path truncation, fixes build with newer gcc.
+- legal: clarify license, add a copy of GPL-2.0 and update/add source SPDX identifiers
 
 
 ## [1.3.0] - 2024-04-25
