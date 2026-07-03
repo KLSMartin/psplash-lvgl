@@ -198,7 +198,53 @@ static void init_lvgl()
   /* propaget the runtime determined screen size */
   disp_drv.hor_res = display_size.width;
   disp_drv.ver_res = display_size.height;
-  printf("Display size %dx%d\n", disp_drv.hor_res, disp_drv.ver_res);
+
+  /* read DISPLAY_ROTATION env for dynamic rotation */
+  const char *rotation_env = getenv("DISPLAY_ROTATION");
+  int rotation = 0;
+  if (rotation_env)
+  {
+    rotation = atoi(rotation_env);
+    switch (rotation) {
+      case 90:
+        disp_drv.sw_rotate = 1;
+        disp_drv.rotated = LV_DISP_ROT_90;
+        break;
+      case 180:
+        disp_drv.sw_rotate = 1;
+        disp_drv.rotated = LV_DISP_ROT_180;
+        break;
+      case 270:
+        disp_drv.sw_rotate = 1;
+        disp_drv.rotated = LV_DISP_ROT_270;
+        break;
+      default:
+        break;
+    }
+  }
+  else
+  {
+    /* default to 90 deg for portrait displays */
+    if (display_size.width < display_size.height)
+    {
+      disp_drv.sw_rotate = 1;
+      disp_drv.rotated = LV_DISP_ROT_90;
+      rotation = 90;
+    }
+  }
+  if (disp_drv.sw_rotate)
+  {
+    printf("Applied software rotation of %d degrees\n", rotation);
+  }
+  if (rotation == 90 || rotation == 270)
+  {
+    printf("Display size %dx%d\n", disp_drv.ver_res, disp_drv.hor_res);
+  }
+  else
+  {
+    printf("Display size %dx%d\n", disp_drv.hor_res, disp_drv.ver_res);
+  }
+
   disp = lv_disp_drv_register(&disp_drv);
   lv_disp_set_default(disp);
 }
