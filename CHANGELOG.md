@@ -6,8 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-07-03
 ### Added
-- feature: allow content rotation with `DISPLAY_ROTATION` environment (90, 180, 270). Default to 90° in case the display is portrait.
+- feature: allow content rotation with `DISPLAY_ROTATION` environment (90, 180, 270). Default to 90° in case the display is portrait. DRM backend only works for 0/180°.
 
 
 ## [1.3.1] - 2025-02-04
